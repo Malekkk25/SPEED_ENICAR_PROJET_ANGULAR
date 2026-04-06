@@ -1,0 +1,66 @@
+ <div class="shell">
+      <!-- Sidebar -->
+      <aside class="sidebar" [class.collapsed]="sidebarCollapsed()">
+        <div class="sidebar-header">
+          <div class="logo-wrap">
+            <div class="eni-logo-container">
+              <div class="eni-logo-box">
+                <div class="eni-logo-en">EN</div>
+                <div class="eni-logo-divider"></div>
+                <div class="eni-logo-text">
+                  <span class="eni-logo-carthage">Carthage</span>
+                  <span class="eni-logo-school">Engineering School</span>
+                </div>
+              </div>
+              <div class="eni-logo-speed" *ngIf="!sidebarCollapsed()">speed</div>
+            </div>
+          </div>
+          <button class="collapse-btn" (click)="sidebarCollapsed.set(!sidebarCollapsed())">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path *ngIf="!sidebarCollapsed()" d="M15 18l-6-6 6-6"/>
+              <path *ngIf="sidebarCollapsed()" d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="user-card" *ngIf="!sidebarCollapsed()">
+          <div class="avatar">
+            {{ initials() }}
+          </div>
+          <div class="user-info">
+            <p class="user-name">{{ fullName() }}</p>
+            <p class="user-email">{{ user()?.email }}</p>
+          </div>
+        </div>
+        <div class="avatar avatar-sm" *ngIf="sidebarCollapsed()" style="margin: 1rem auto;">
+          {{ initials() }}
+        </div>
+
+        <nav class="nav">
+          <span class="nav-section" *ngIf="!sidebarCollapsed()">Navigation</span>
+          <a *ngFor="let item of navItems"
+             class="nav-item"
+             [routerLink]="item.path"
+             routerLinkActive="active"
+             [title]="item.label">
+            <span class="nav-icon" [innerHTML]="item.icon"></span>
+            <span class="nav-label" *ngIf="!sidebarCollapsed()">{{ item.label }}</span>
+            <span class="nav-badge" *ngIf="item.badge && !sidebarCollapsed()">{{ item.badge }}</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="logout-btn" (click)="logout()" [title]="'Déconnexion'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
+            <span *ngIf="!sidebarCollapsed()">Déconnexion</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main">
+        <router-outlet/>
+      </main>
+    </div>

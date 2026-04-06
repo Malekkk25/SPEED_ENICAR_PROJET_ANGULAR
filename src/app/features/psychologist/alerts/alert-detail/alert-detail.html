@@ -1,0 +1,85 @@
+<div class="page">
+  <div class="breadcrumb">
+    <a routerLink="/psychologist/alerts">Alertes</a>
+    <span>/</span>
+    <span>{{ alert()?.studentName }}</span>
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+  <div *ngIf="!loading() && !alert()" style="text-align:center;padding:3rem;color:#888">Alerte introuvable</div>
+
+  <div class="layout" *ngIf="alert()">
+    <div class="main-col">
+      <div class="card alert-header-card" [class]="'border-' + alert()!.currentRiskLevel.toLowerCase()">
+        <div class="ah-left">
+          <div class="big-emoji">{{ levelEmoji(alert()!.currentRiskLevel) }}</div>
+          <div>
+            <div class="ah-badges">
+              <span class="level-badge" [class]="'lbadge-' + alert()!.currentRiskLevel.toLowerCase()">
+                {{ levelLabel(alert()!.currentRiskLevel) }}
+              </span>
+            </div>
+            <h1>{{ alert()!.studentName }}</h1>
+            <p class="ah-date">{{ alert()!.department }} — {{ alert()!.level }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Indicateurs</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+          <div *ngIf="alert()!.recentMoodAverage" style="background:#f8f9fb;padding:12px;border-radius:8px">
+            <span style="font-size:1.3rem;font-weight:700;display:block">{{ alert()!.recentMoodAverage }}/5</span>
+            <span style="font-size:0.78rem;color:#888">Humeur moyenne</span>
+          </div>
+          <div style="background:#f8f9fb;padding:12px;border-radius:8px">
+            <span style="font-size:1.3rem;font-weight:700;display:block">{{ alert()!.unjustifiedAbsences }}</span>
+            <span style="font-size:0.78rem;color:#888">Absences injustifiees</span>
+          </div>
+          <div style="background:#f8f9fb;padding:12px;border-radius:8px">
+            <span style="font-size:1.3rem;font-weight:700;display:block">{{ alert()!.academicAverage }}%</span>
+            <span style="font-size:0.78rem;color:#888">Moyenne academique</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Raisons d'alerte</h2>
+        <div *ngFor="let r of alert()!.alertReasons" class="trigger-box" style="margin-bottom:6px;padding:8px 12px;background:#fef2f2;border-radius:6px;font-size:0.85rem;color:#991b1b">
+          {{ r }}
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <div class="card student-side">
+        <h2 class="section-title">Etudiant concerne</h2>
+        <div class="student-info">
+          <div class="s-ava">{{ initial(alert()!) }}</div>
+          <div>
+            <p class="s-name">{{ alert()!.studentName }}</p>
+            <p class="s-meta">{{ alert()!.department }} — {{ alert()!.level }}</p>
+          </div>
+        </div>
+        <p *ngIf="alert()!.lastSessionDate" style="font-size:0.82rem;color:#888;margin-top:8px">
+          Derniere seance : {{ alert()!.lastSessionDate | date:'dd/MM/yyyy' }}
+        </p>
+        <p *ngIf="alert()!.followUpRequired" style="font-size:0.82rem;color:#ea580c;margin-top:4px">
+          Suivi en attente
+        </p>
+      </div>
+
+      <div class="card quick-actions">
+        <h2 class="section-title">Actions rapides</h2>
+        <a [routerLink]="['/psychologist/records/new']"
+           [queryParams]="{ studentId: alert()!.studentId }"
+           class="qa-btn">
+          Nouvelle fiche confidentielle
+        </a>
+        <a [routerLink]="['/psychologist/records/student', alert()!.studentId]" class="qa-btn">
+          Historique des seances
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Etudiants suivis</h1>
+      <p class="subtitle">{{ students().length }} etudiants en suivi actif</p>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Rechercher un etudiant..." [(ngModel)]="search" (input)="filterStudents()" />
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+
+  <div class="students-grid" *ngIf="!loading()">
+    <a class="student-card" *ngFor="let s of filtered()" [routerLink]="['/psychologist/students', s.studentId]">
+      <div class="card-top">
+        <div class="ava" [style.background]="avatarColor(s)">{{ initial(s) }}</div>
+        <div class="student-info">
+          <h3>
+            {{ s.studentName }}
+            <span *ngIf="s.hasUrgent" class="urgent-tag">URGENT</span>
+          </h3>
+          <p class="dept">{{ s.department }} <span *ngIf="s.level">— {{ s.level }}</span></p>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="meta-item">
+          <span class="meta-label">Fiches</span>
+          <span class="meta-val">{{ s.recordCount }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">RDV</span>
+          <span class="meta-val">{{ s.appointmentCount }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Risque</span>
+          <span class="meta-val" [class]="'risk-text-' + s.riskLevel.toLowerCase()">{{ riskLabel(s.riskLevel) }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="see-more">Voir le dossier</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading() && filtered().length === 0">
+    <p>Aucun etudiant trouve</p>
+  </div>
+</div>

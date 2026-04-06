@@ -1,0 +1,352 @@
+/* ═══════════════════════════════════════════════════
+   LOGIN PAGE — full viewport, two panels
+   ═══════════════════════════════════════════════════ */
+
+.login-page {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Left panel ────────────────────────────────────── */
+.panel-left {
+  width: 45%;
+  background: linear-gradient(160deg, #0b1e36 0%, #153d6a 55%, #1e5799 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-left::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 380px;
+  height: 380px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+
+.panel-left::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 260px;
+  height: 260px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 50%;
+}
+
+.panel-left-content {
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.logo-sub {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  margin-top: 3px;
+  letter-spacing: 0.3px;
+}
+
+/* Hero */
+.hero h1 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.7rem;
+}
+
+.hero p {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  opacity: 0.65;
+}
+
+/* Features */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.83rem;
+  opacity: 0.78;
+}
+
+.feat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Copyright */
+.copy {
+  font-size: 0.7rem;
+  opacity: 0.3;
+}
+
+/* ── Right panel ───────────────────────────────────── */
+.panel-right {
+  width: 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: #f4f6f9;
+}
+
+/* ── Form ──────────────────────────────────────────── */
+.form {
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Form header with icon */
+.form-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #153d6a, #1e5799);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 16px rgba(21,61,106,0.25);
+}
+
+.form h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.form-hint {
+  font-size: 0.84rem;
+  color: #9ca3af;
+}
+
+/* Fields */
+.field {
+  margin-top: 1.2rem;
+}
+
+/* Labels */
+.label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 7px;
+  letter-spacing: 0.2px;
+}
+
+/* Input wrapper with icon */
+.input-wrap {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px 0 40px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 11px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #1a4f82;
+  box-shadow: 0 0 0 3px rgba(26,79,130,0.1);
+}
+
+.input::placeholder {
+  color: #c0c4cc;
+}
+
+/* Password field */
+.pwd-box .input {
+  padding-right: 80px;
+}
+
+.pwd-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #1a4f82;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.pwd-btn:hover {
+  background: rgba(26,79,130,0.07);
+}
+
+/* Error */
+.err {
+  margin-top: 1rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Submit */
+.btn {
+  margin-top: 1.6rem;
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #153d6a, #1e5799);
+  color: #fff;
+  font-size: 0.93rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(21,61,106,0.3);
+}
+
+.btn:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 6px 18px rgba(21,61,106,0.38);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spin {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: rotate 0.55s linear infinite;
+}
+
+@keyframes rotate { to { transform: rotate(360deg); } }
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 860px) {
+  .login-page {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  .panel-left {
+    width: 100%;
+    padding: 2rem 1.5rem;
+  }
+  .panel-left-content {
+    max-width: 100%;
+    gap: 1.2rem;
+  }
+  .hero h1 { font-size: 1.2rem; }
+  .hero p { display: none; }
+  .features { flex-direction: row; flex-wrap: wrap; gap: 6px 16px; }
+  .copy { display: none; }
+  .panel-right {
+    width: 100%;
+    padding: 2rem 1.5rem;
+    flex: 1;
+  }
+}

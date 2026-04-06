@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; }
+    .page { padding: 2rem; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; font-family: 'DM Sans', sans-serif; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #64748b; }
+    .breadcrumb a { color: #2563eb; text-decoration: none; font-weight: 600; }
+
+    .profile-header { display: flex; align-items: center; gap: 1.25rem; background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f4f8; }
+    .big-ava { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, #5bc8af, #2980b9); color: #fff; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .profile-info { flex: 1; }
+    .profile-info h1 { font-size: 1.35rem; font-weight: 700; color: #0d2137; margin: 0 0 0.5rem; }
+    .meta-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .pill { background: #f0f4f8; color: #475569; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .header-actions { display: flex; gap: 0.5rem; }
+    .btn-primary { background: linear-gradient(135deg, #1a3a5c, #2980b9); color: #fff; border: none; border-radius: 10px; padding: 0.65rem 1.25rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost { background: #f0f4f8; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.65rem 1.25rem; font-size: 0.8rem; font-weight: 600; color: #1a3a5c; cursor: pointer; text-decoration: none; white-space: nowrap; }
+
+    .mood-section { display: flex; flex-direction: column; gap: 1rem; }
+    .mood-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f4f8; display: flex; flex-direction: column; gap: 0.5rem; }
+    .stat-val { font-size: 2rem; font-weight: 700; color: #0d2137; }
+    .stat-val.trend { font-size: 1.25rem; }
+    .stat-label { font-size: 0.75rem; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .mood-bar { background: #f0f4f8; border-radius: 4px; height: 8px; overflow: hidden; }
+    .mood-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+    .mood-1, .mood-2 { background: #ef4444; }
+    .mood-3 { background: #f59e0b; }
+    .mood-4, .mood-5 { background: #22c55e; }
+    .trend-up { color: #16a34a; }
+    .trend-down { color: #dc2626; }
+    .trend-stable { color: #64748b; }
+
+    .card { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f4f8; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .card-header h2 { font-size: 1rem; font-weight: 700; color: #0d2137; margin: 0; }
+    .count-badge { background: #dbeafe; color: #2563eb; font-size: 0.75rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+    .link-more { font-size: 0.8rem; color: #2563eb; text-decoration: none; font-weight: 600; }
+
+    .mood-timeline { display: flex; gap: 0.5rem; align-items: flex-end; overflow-x: auto; padding-bottom: 0.5rem; }
+    .mood-entry { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; min-width: 60px; }
+    .entry-date { text-align: center; }
+    .day { font-size: 0.9rem; font-weight: 700; color: #1e293b; display: block; }
+    .month { font-size: 0.65rem; color: #94a3b8; display: block; text-transform: uppercase; }
+    .entry-bar-wrap { height: 80px; display: flex; align-items: flex-end; }
+    .entry-bar { width: 24px; border-radius: 4px 4px 0 0; transition: height 0.3s; }
+    .entry-info { display: flex; flex-direction: column; align-items: center; }
+    .entry-emoji { font-size: 1.1rem; }
+    .entry-score { font-size: 0.65rem; color: #64748b; font-weight: 600; }
+    .entry-note { max-width: 100px; text-align: center; }
+    .entry-note p { font-size: 0.65rem; color: #94a3b8; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .sessions-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .session-item { display: flex; align-items: flex-start; gap: 1rem; padding: 0.875rem; background: #f8fafc; border-radius: 10px; }
+    .session-date { font-size: 0.75rem; font-weight: 700; color: #64748b; min-width: 56px; }
+    .session-info { flex: 1; }
+    .session-complaint { font-size: 0.875rem; font-weight: 600; color: #1e293b; margin: 0; }
+    .session-plan { font-size: 0.775rem; color: #64748b; margin: 0.25rem 0 0; }
+    .risk-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; white-space: nowrap; }
+    .risk-low { background: #dcfce7; color: #16a34a; }
+    .risk-medium { background: #fef9c3; color: #ca8a04; }
+    .risk-high { background: #ffedd5; color: #ea580c; }
+    .risk-critical { background: #fee2e2; color: #dc2626; }
+    .empty-state { padding: 2rem; text-align: center; color: #94a3b8; font-size: 0.875rem; }

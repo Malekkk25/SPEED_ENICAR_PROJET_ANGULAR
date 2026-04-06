@@ -1,0 +1,31 @@
+ @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; }
+    .page { padding: 2rem; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; font-family: 'DM Sans', sans-serif; }
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    h1 { font-size: 1.75rem; font-weight: 700; color: #0d2137; margin: 0; }
+    .subtitle { font-size: 0.875rem; color: #64748b; margin: 0.25rem 0 0; }
+    .btn-primary { display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #1a3a5c, #2980b9); color: #fff; border: none; border-radius: 10px; padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-primary svg { width: 16px; height: 16px; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(41,128,185,0.35); }
+    .privacy-banner { background: #1e3a5c; color: #a8c8e8; border-radius: 12px; padding: 0.875rem 1.25rem; font-size: 0.8rem; font-weight: 500; }
+    .search-bar { display: flex; align-items: center; gap: 0.75rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem 1rem; }
+    .search-bar svg { width: 18px; height: 18px; color: #94a3b8; }
+    .search-bar input { flex: 1; border: none; outline: none; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; }
+    .records-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+    .record-card { background: #fff; border-radius: 16px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f4f8; display: flex; flex-direction: column; gap: 0.875rem; text-decoration: none; color: inherit; transition: all 0.2s; cursor: pointer; }
+    .record-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: #bfdbfe; }
+    .rc-header { display: flex; align-items: center; gap: 0.75rem; }
+    .rc-ava { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #1a3a5c, #2980b9); color: #fff; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rc-student { flex: 1; }
+    .rc-name { font-size: 0.9rem; font-weight: 700; color: #0d2137; margin: 0; }
+    .rc-date { font-size: 0.72rem; color: #64748b; margin: 0; }
+    .risk-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+    .risk-low { background: #dcfce7; color: #16a34a; }
+    .risk-medium { background: #fef9c3; color: #ca8a04; }
+    .risk-high { background: #ffedd5; color: #ea580c; }
+    .risk-critical { background: #fee2e2; color: #dc2626; }
+    .rc-body { border-top: 1px solid #f0f4f8; border-bottom: 1px solid #f0f4f8; padding: 0.75rem 0; }
+    .rc-complaint { font-size: 0.875rem; color: #475569; margin: 0; line-height: 1.5; }
+    .rc-footer { display: flex; align-items: center; justify-content: space-between; }
+    .follow-up { font-size: 0.75rem; color: #7c3aed; font-weight: 600; }
+    .rc-link { font-size: 0.8rem; font-weight: 600; color: #2563eb; }

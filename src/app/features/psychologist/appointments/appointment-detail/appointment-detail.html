@@ -1,0 +1,123 @@
+<div class="page">
+  <div class="breadcrumb">
+    <a routerLink="/psychologist/appointments">Rendez-vous</a>
+    <span>/</span>
+    <span>Detail #{{ appt()?.id }}</span>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+
+  <!-- Error -->
+  <div *ngIf="error()" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin:1rem 0">
+    {{ error() }}
+  </div>
+
+  <div class="layout" *ngIf="appt() && !loading()">
+    <!-- Left: main info -->
+    <div class="main-col">
+      <!-- Student card -->
+      <div class="card student-card">
+        <div class="student-header">
+          <div class="big-ava">{{ initial() }}</div>
+          <div>
+            <h2>{{ appt()!.studentName }}</h2>
+            <p class="student-meta">{{ appt()!.studentDepartment }}</p>
+          </div>
+          <div class="student-actions">
+            <a [routerLink]="['/psychologist/students', appt()!.studentId]" class="btn-ghost">
+              Voir le dossier
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment details -->
+      <div class="card">
+        <h3 class="section-title">Informations du rendez-vous</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Date</span>
+            <span class="info-val">{{ appt()!.dateTime | date:'EEEE d MMMM yyyy':'':'fr' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Heure</span>
+            <span class="info-val">{{ appt()!.dateTime | date:'HH:mm' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Duree</span>
+            <span class="info-val">{{ appt()!.duration }} minutes</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Type</span>
+            <span class="type-badge" [class]="'type-' + appt()!.type.toLowerCase()">{{ typeLabel(appt()!.type) }}</span>
+          </div>
+          <div class="info-item full">
+            <span class="info-label">Motif de consultation</span>
+            <p class="info-reason">{{ appt()!.reason || 'Non renseigne' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes post-consultation -->
+      <div class="card" *ngIf="appt()!.status !== 'CANCELLED'">
+        <h3 class="section-title">Notes de consultation</h3>
+        <p class="privacy-note">
+          Ces notes sont strictement confidentielles et ne sont accessibles qu'au psychologue.
+        </p>
+
+        <!-- Already completed: show notes -->
+        <div *ngIf="appt()!.status === 'COMPLETED' && !editingNotes()">
+          <p class="existing-notes">{{ appt()!.notes || 'Aucune note enregistree.' }}</p>
+          <button class="btn-ghost-blue" (click)="editingNotes.set(true)">Modifier les notes</button>
+        </div>
+
+        <!-- Not completed or editing: show form -->
+        <div *ngIf="appt()!.status !== 'COMPLETED' || editingNotes()">
+          <textarea class="notes-area" [(ngModel)]="notesText"
+                    placeholder="Observations, interventions, plan de suivi..."
+                    rows="6"></textarea>
+          <div class="notes-actions">
+            <button class="btn-cancel" *ngIf="editingNotes()" (click)="editingNotes.set(false)">Annuler</button>
+            <button class="btn-save" (click)="saveNotes()">
+              {{ appt()!.status === 'COMPLETED' ? 'Mettre a jour' : 'Terminer la consultation' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: status & actions -->
+    <div class="side-col">
+      <div class="card status-card">
+        <h3 class="section-title">Statut</h3>
+        <div class="status-display">
+          <span class="big-status" [class]="'status-' + appt()!.status.toLowerCase()">
+            {{ statusLabel(appt()!.status) }}
+          </span>
+        </div>
+        <div class="action-list" *ngIf="appt()!.status !== 'CANCELLED' && appt()!.status !== 'COMPLETED'">
+          <button class="btn-action confirm" *ngIf="appt()!.status === 'PENDING'" (click)="confirm()">
+            Confirmer
+          </button>
+          <button class="btn-action cancel" (click)="cancel()">
+            Annuler
+          </button>
+        </div>
+        <p class="completed-msg" *ngIf="appt()!.status === 'COMPLETED'">
+          Consultation terminee le {{ appt()!.createdAt | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Creer une fiche</h3>
+        <p class="hint-text">Documenter cette seance dans une fiche de suivi confidentielle.</p>
+        <a [routerLink]="['/psychologist/records/new']"
+           [queryParams]="{ studentId: appt()!.studentId }"
+           class="btn-primary full">
+          + Nouvelle fiche
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

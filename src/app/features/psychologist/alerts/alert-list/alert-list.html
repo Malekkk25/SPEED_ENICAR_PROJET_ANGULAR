@@ -1,0 +1,95 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Alertes etudiants</h1>
+      <p class="subtitle">Surveillance automatique + rendez-vous urgents</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+
+  <ng-container *ngIf="!loading()">
+    <div class="summary-strip">
+      <div class="summary-item critical">
+        <span class="s-count">{{ countByLevel('CRITICAL') }}</span>
+        <span class="s-label">Critique</span>
+      </div>
+      <div class="summary-item high">
+        <span class="s-count">{{ countByLevel('HIGH') }}</span>
+        <span class="s-label">Eleve</span>
+      </div>
+      <div class="summary-item medium">
+        <span class="s-count">{{ countByLevel('MODERATE') }}</span>
+        <span class="s-label">Modere</span>
+      </div>
+      <div class="summary-item low">
+        <span class="s-count">{{ countByLevel('LOW') }}</span>
+        <span class="s-label">Faible</span>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <select class="select-field" [(ngModel)]="levelFilter">
+        <option value="">Tous les niveaux</option>
+        <option value="CRITICAL">Critique</option>
+        <option value="HIGH">Eleve</option>
+        <option value="MODERATE">Modere</option>
+        <option value="LOW">Faible</option>
+      </select>
+    </div>
+
+    <div class="alerts-list">
+      <a class="alert-card" *ngFor="let a of displayedAlerts()"
+         [routerLink]="['/psychologist/students', a.studentId]"
+         [class]="'alert-card level-border-' + a.riskLevel.toLowerCase()">
+        <div class="alert-level-dot" [class]="'dot-' + a.riskLevel.toLowerCase()">
+          {{ levelEmoji(a.riskLevel) }}
+        </div>
+        <div class="alert-body">
+          <div class="alert-top">
+            <h3>
+              {{ a.studentName }}
+              <span *ngIf="a.type === 'urgent_appointment'" class="urgent-chip">RDV URGENT</span>
+            </h3>
+            <span class="alert-badge" [class]="'badge-' + a.riskLevel.toLowerCase()">
+              {{ levelLabel(a.riskLevel) }}
+            </span>
+          </div>
+          <div class="alert-meta">
+            <div class="alert-student">
+              <div class="mini-ava">{{ initial(a) }}</div>
+              <span>{{ a.department }} <span *ngIf="a.level">— {{ a.level }}</span></span>
+            </div>
+            <span *ngIf="a.lastSessionDate" class="alert-date">Derniere seance : {{ a.lastSessionDate }}</span>
+          </div>
+
+          <div class="alert-indicators" *ngIf="a.moodAverage || a.absences || a.academicAverage"
+               style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+            <span *ngIf="a.moodAverage" style="font-size:0.82rem;color:#888">
+              Humeur: {{ a.moodAverage }}/5
+            </span>
+            <span *ngIf="a.absences" style="font-size:0.82rem;color:#888">
+              Absences: {{ a.absences }}
+            </span>
+            <span *ngIf="a.academicAverage" style="font-size:0.82rem;color:#888">
+              Moy: {{ a.academicAverage }}%
+            </span>
+          </div>
+
+          <div class="alert-reasons" style="margin-top:6px">
+            <p *ngFor="let r of a.reasons" class="alert-trigger" style="font-size:0.8rem;color:#666;margin:2px 0">
+              {{ r }}
+            </p>
+          </div>
+        </div>
+        <div class="alert-action">
+          <span style="font-size:0.8rem;color:#1a4f82">Voir dossier</span>
+        </div>
+      </a>
+
+      <div class="empty-state" *ngIf="displayedAlerts().length === 0">
+        <p>Aucune alerte active</p>
+      </div>
+    </div>
+  </ng-container>
+</div>

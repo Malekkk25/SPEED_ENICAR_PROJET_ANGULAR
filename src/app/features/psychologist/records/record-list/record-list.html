@@ -1,0 +1,52 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Fiches confidentielles</h1>
+      <p class="subtitle">Dossiers de suivi psychologique</p>
+    </div>
+    <a routerLink="/psychologist/records/new" class="btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nouvelle fiche
+    </a>
+  </div>
+
+  <div class="privacy-banner">
+    Fiches chiffrees et accessibles uniquement au psychologue. Toute consultation est tracee.
+  </div>
+
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Rechercher par etudiant ou observations..." [(ngModel)]="search" />
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+
+  <div class="records-grid" *ngIf="!loading()">
+    <a class="record-card" *ngFor="let r of filteredRecords" [routerLink]="['/psychologist/records', r.id]">
+      <div class="rc-header">
+        <div class="rc-ava">{{ initial(r) }}</div>
+        <div class="rc-student">
+          <p class="rc-name">{{ r.studentName }}</p>
+          <p class="rc-date">{{ r.studentDepartment }} — {{ r.sessionDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <span class="risk-badge" [class]="'risk-' + r.riskLevel.toLowerCase()">{{ riskLabel(r.riskLevel) }}</span>
+      </div>
+      <div class="rc-body">
+        <p class="rc-complaint">{{ r.observations | slice:0:120 }}{{ r.observations.length > 120 ? '...' : '' }}</p>
+      </div>
+      <div class="rc-footer">
+        <span *ngIf="r.followUpRequired && r.nextSessionDate" class="follow-up">
+          Suivi : {{ r.nextSessionDate | date:'dd/MM/yyyy' }}
+        </span>
+        <span *ngIf="r.followUpRequired && !r.nextSessionDate" class="follow-up">
+          Suivi requis
+        </span>
+        <span class="rc-link">Voir</span>
+      </div>
+    </a>
+  </div>
+
+  <div *ngIf="!loading() && filteredRecords.length === 0" style="text-align:center;padding:3rem;color:#888">
+    Aucune fiche de suivi
+  </div>
+</div>

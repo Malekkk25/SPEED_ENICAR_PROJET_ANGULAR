@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+    * { box-sizing: border-box; }
+    .page { padding: 2rem; max-width: 1100px; margin: 0 auto; font-family: 'DM Sans', sans-serif; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; }
+    .breadcrumb a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .layout { display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start; }
+    .main-col, .side-col { display: flex; flex-direction: column; gap: 1.5rem; }
+    .card { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #f0f4f8; }
+    .section-title { font-size: 0.95rem; font-weight: 700; color: #0d2137; margin: 0 0 1rem; }
+
+    .student-header { display: flex; align-items: center; gap: 1rem; }
+    .big-ava { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #5bc8af, #2980b9); color: #fff; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .student-header h2 { font-size: 1.1rem; font-weight: 700; color: #0d2137; margin: 0; }
+    .student-meta { font-size: 0.8rem; color: #64748b; margin: 0.25rem 0 0; }
+    .student-actions { margin-left: auto; }
+    .btn-ghost { background: #f0f4f8; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #1a3a5c; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-ghost:hover { background: #dbeafe; border-color: #2563eb; color: #2563eb; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .info-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .info-item.full { grid-column: 1 / -1; }
+    .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; font-weight: 600; }
+    .info-val { font-size: 0.925rem; font-weight: 600; color: #1e293b; }
+    .info-reason { font-size: 0.875rem; color: #475569; margin: 0; line-height: 1.6; }
+
+    .type-badge { font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; align-self: flex-start; }
+    .type-initial { background: #dbeafe; color: #2563eb; }
+    .type-follow_up { background: #f3e8ff; color: #7c3aed; }
+    .type-urgent { background: #fee2e2; color: #dc2626; }
+
+    .privacy-note { background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: #713f12; margin-bottom: 1rem; }
+    .existing-notes { font-size: 0.875rem; color: #475569; line-height: 1.7; white-space: pre-wrap; }
+    .btn-ghost-blue { background: transparent; border: 1px solid #2563eb; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #2563eb; cursor: pointer; margin-top: 0.75rem; transition: all 0.2s; }
+    .btn-ghost-blue:hover { background: #dbeafe; }
+    .notes-area { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; resize: vertical; outline: none; transition: border 0.2s; }
+    .notes-area:focus { border-color: #2563eb; }
+    .notes-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.75rem; }
+    .btn-cancel { background: #f0f4f8; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.8rem; font-weight: 600; color: #64748b; cursor: pointer; }
+    .btn-save { background: linear-gradient(135deg, #1a3a5c, #2980b9); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(41,128,185,0.35); }
+
+    .status-display { margin-bottom: 1rem; }
+    .big-status { font-size: 0.875rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; }
+    .status-pending { background: #ffedd5; color: #ea580c; }
+    .status-confirmed { background: #dcfce7; color: #16a34a; }
+    .status-completed { background: #ede9fe; color: #7c3aed; }
+    .status-cancelled { background: #f1f5f9; color: #94a3b8; }
+    .action-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .btn-action { border: none; border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.875rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s; }
+    .btn-action.confirm { background: #dcfce7; color: #16a34a; }
+    .btn-action.confirm:hover { background: #16a34a; color: #fff; }
+    .btn-action.cancel { background: #fee2e2; color: #dc2626; }
+    .btn-action.cancel:hover { background: #dc2626; color: #fff; }
+    .completed-msg { font-size: 0.8rem; color: #64748b; text-align: center; }
+    .hint-text { font-size: 0.8rem; color: #64748b; margin: 0 0 0.75rem; line-height: 1.5; }
+    .btn-primary { display: block; text-align: center; background: linear-gradient(135deg, #1a3a5c, #2980b9); color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-size: 0.875rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .btn-primary.full { width: 100%; }
+    .btn-primary:hover { transform: translateY(-1px); }

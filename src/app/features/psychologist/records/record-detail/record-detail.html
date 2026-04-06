@@ -1,0 +1,148 @@
+<div class="page">
+  <div class="breadcrumb">
+    <a routerLink="/psychologist/records">Fiches</a>
+    <span>/</span>
+    <span>Fiche #{{ record()?.id }}</span>
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+  <div *ngIf="!loading() && !record()" style="text-align:center;padding:3rem;color:#888">Fiche introuvable</div>
+
+  <!-- Error message -->
+  <div *ngIf="error()" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:1rem">
+    {{ error() }}
+  </div>
+
+  <!-- ═══ VIEW MODE ═══ -->
+  <div class="detail-layout" *ngIf="record() && !editing()">
+    <div class="main-col">
+      <div class="card">
+        <div class="rec-header">
+          <div class="ava">{{ initial(record()!) }}</div>
+          <div>
+            <h2>{{ record()!.studentName }}</h2>
+            <p class="meta">{{ record()!.studentDepartment }} — {{ record()!.studentLevel }} · {{ record()!.sessionDate | date:'dd MMMM yyyy' }}</p>
+          </div>
+          <span class="risk-badge" [class]="'risk-' + record()!.riskLevel.toLowerCase()">{{ riskLabel(record()!.riskLevel) }}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="field-label">Observations cliniques</h3>
+        <p class="field-val">{{ record()!.observations }}</p>
+      </div>
+
+      <div class="card" *ngIf="record()!.interventions">
+        <h3 class="field-label">Interventions realisees</h3>
+        <p class="field-val">{{ record()!.interventions }}</p>
+      </div>
+
+      <div class="card" *ngIf="record()!.recommendations">
+        <h3 class="field-label">Recommandations</h3>
+        <p class="field-val">{{ record()!.recommendations }}</p>
+      </div>
+
+      <div class="card" *ngIf="record()!.studentProgress">
+        <h3 class="field-label">Progression</h3>
+        <p class="field-val">{{ record()!.studentProgress }}</p>
+      </div>
+    </div>
+
+    <div class="side-col">
+      <div class="card">
+        <h3 class="field-label">Duree de seance</h3>
+        <p class="field-val">{{ record()!.sessionDurationMinutes }} minutes</p>
+      </div>
+
+      <div class="card" *ngIf="record()!.followUpRequired">
+        <h3 class="field-label">Suivi planifie</h3>
+        <p class="field-val">{{ record()!.nextSessionDate ? (record()!.nextSessionDate | date:'dd/MM/yyyy') : 'A planifier' }}</p>
+      </div>
+
+      <div class="card">
+        <h3 class="field-label">Dates</h3>
+        <p class="field-val" style="font-size:0.82rem;color:#888">
+          Cree le {{ record()!.createdAt | date:'dd/MM/yyyy HH:mm' }}<br>
+          Modifie le {{ record()!.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+      </div>
+
+      <div class="card actions-card">
+        <button class="btn-edit" (click)="startEdit()">Modifier</button>
+        <button class="btn-ghost" (click)="viewHistory()">Historique etudiant</button>
+        <button class="btn-danger" (click)="delete()" [disabled]="deleting()">
+          {{ deleting() ? 'Suppression...' : 'Supprimer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EDIT MODE ═══ -->
+  <div class="edit-layout" *ngIf="record() && editing()">
+    <div class="card edit-card">
+      <div class="edit-header">
+        <h2>Modifier la fiche #{{ record()!.id }}</h2>
+        <p style="color:#888;font-size:0.85rem">{{ record()!.studentName }} — {{ record()!.sessionDate | date:'dd/MM/yyyy' }}</p>
+      </div>
+
+      <form (ngSubmit)="saveEdit()">
+        <div class="edit-field">
+          <label>Observations cliniques</label>
+          <textarea [(ngModel)]="editForm.observations" name="observations" rows="5" class="edit-textarea"></textarea>
+        </div>
+
+        <div class="edit-field">
+          <label>Interventions realisees</label>
+          <textarea [(ngModel)]="editForm.interventions" name="interventions" rows="3" class="edit-textarea"></textarea>
+        </div>
+
+        <div class="edit-field">
+          <label>Recommandations</label>
+          <textarea [(ngModel)]="editForm.recommendations" name="recommendations" rows="3" class="edit-textarea"></textarea>
+        </div>
+
+        <div class="edit-field">
+          <label>Progression de l'etudiant</label>
+          <input type="text" [(ngModel)]="editForm.studentProgress" name="studentProgress" class="edit-input" />
+        </div>
+
+        <div class="edit-row">
+          <div class="edit-field">
+            <label>Niveau de risque</label>
+            <select [(ngModel)]="editForm.riskLevel" name="riskLevel" class="edit-input">
+              <option value="LOW">Faible</option>
+              <option value="MODERATE">Modere</option>
+              <option value="HIGH">Eleve</option>
+              <option value="CRITICAL">Critique</option>
+            </select>
+          </div>
+
+          <div class="edit-field">
+            <label>Duree (min)</label>
+            <input type="number" [(ngModel)]="editForm.sessionDurationMinutes" name="duration" class="edit-input" />
+          </div>
+
+          <div class="edit-field">
+            <label>Suivi requis</label>
+            <select [(ngModel)]="editForm.followUpRequired" name="followUpRequired" class="edit-input">
+              <option [ngValue]="false">Non</option>
+              <option [ngValue]="true">Oui</option>
+            </select>
+          </div>
+
+          <div class="edit-field" *ngIf="editForm.followUpRequired">
+            <label>Date de suivi</label>
+            <input type="date" [(ngModel)]="editForm.nextSessionDate" name="nextSessionDate" class="edit-input" />
+          </div>
+        </div>
+
+        <div class="edit-actions">
+          <button type="button" class="btn-cancel" (click)="cancelEdit()">Annuler</button>
+          <button type="submit" class="btn-save" [disabled]="saving()">
+            {{ saving() ? 'Enregistrement...' : 'Sauvegarder' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

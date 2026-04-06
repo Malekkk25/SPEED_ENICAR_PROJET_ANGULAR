@@ -1,0 +1,78 @@
+<div class="page">
+  <div class="breadcrumb">
+    <a routerLink="/psychologist/students">Etudiants</a>
+    <span>/</span>
+    <span>{{ studentName() || 'Etudiant #' + studentId }}</span>
+  </div>
+
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+
+  <ng-container *ngIf="!loading()">
+
+    <!-- Profile header -->
+    <div class="profile-header">
+      <div class="big-ava">{{ initial() }}</div>
+      <div class="profile-info">
+        <h1>{{ studentName() || 'Etudiant inconnu' }}</h1>
+        <div class="meta-pills" *ngIf="studentDepartment()">
+          <span class="pill">{{ studentDepartment() }}</span>
+          <span class="pill">{{ studentLevel() }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary" (click)="newRecord()">+ Nouvelle fiche</button>
+      </div>
+    </div>
+
+    <!-- Records section -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Fiches de suivi</h2>
+        <span class="count-badge">{{ records().length }} fiches</span>
+      </div>
+
+      <div class="sessions-list" *ngIf="records().length > 0">
+        <a class="session-item" *ngFor="let r of records()" [routerLink]="['/psychologist/records', r.id]">
+          <div class="session-date">{{ r.sessionDate | date:'dd/MM/yy' }}</div>
+          <div class="session-info">
+            <p class="session-complaint">{{ r.observations | slice:0:100 }}{{ r.observations.length > 100 ? '...' : '' }}</p>
+            <div class="session-meta">
+              <span>{{ r.sessionDurationMinutes }} min</span>
+              <span *ngIf="r.followUpRequired" class="follow-tag">Suivi requis</span>
+              <span *ngIf="r.studentProgress">{{ r.studentProgress }}</span>
+            </div>
+          </div>
+          <span class="risk-badge" [class]="'risk-' + r.riskLevel.toLowerCase()">{{ riskLabel(r.riskLevel) }}</span>
+        </a>
+      </div>
+
+      <div class="empty-state" *ngIf="records().length === 0">
+        <p>Aucune fiche de suivi pour cet etudiant</p>
+        <button class="btn-ghost" (click)="newRecord()">Creer la premiere fiche</button>
+      </div>
+    </section>
+
+    <!-- Appointments section -->
+    <section class="card" *ngIf="appointments().length > 0">
+      <div class="card-header">
+        <h2>Rendez-vous</h2>
+        <span class="count-badge">{{ appointments().length }}</span>
+      </div>
+
+      <div class="sessions-list">
+        <a class="session-item" *ngFor="let a of appointments()" [routerLink]="['/psychologist/appointments', a.id]">
+          <div class="session-date">{{ a.dateTime | date:'dd/MM HH:mm' }}</div>
+          <div class="session-info">
+            <p class="session-complaint">{{ a.reason || 'Pas de motif' }}</p>
+            <div class="session-meta">
+              <span>{{ a.duration }} min</span>
+              <span>{{ typeLabel(a.type) }}</span>
+            </div>
+          </div>
+          <span class="status-badge" [class]="'st-' + a.status.toLowerCase()">{{ statusLabel(a.status) }}</span>
+        </a>
+      </div>
+    </section>
+
+  </ng-container>
+</div>

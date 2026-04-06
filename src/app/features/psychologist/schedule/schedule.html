@@ -1,0 +1,86 @@
+<div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Mon planning</h1>
+          <p class="subtitle">Gérez vos créneaux de disponibilité pour les rendez-vous</p>
+        </div>
+        <button class="btn-save" (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement…' : '💾 Sauvegarder' }}
+        </button>
+      </div>
+
+      <div class="info-banner">
+        ℹ️ Les étudiants ne peuvent demander des rendez-vous que sur les créneaux marqués comme disponibles.
+      </div>
+
+      <!-- Week grid -->
+      <div class="week-grid">
+        <div class="day-col" *ngFor="let day of schedule()">
+          <div class="day-header">
+            <span class="day-name">{{ day.dayName }}</span>
+            <span class="day-short">{{ day.dayShort }}</span>
+          </div>
+
+          <div class="slots-list">
+            <div class="slot" *ngFor="let slot of day.slots; let i = index"
+                 [class.available]="slot.isAvailable"
+                 [class.unavailable]="!slot.isAvailable"
+                 (click)="toggleSlot(day.dayIndex, i)">
+              <div class="slot-time">
+                <span class="slot-start">{{ slot.startTime }}</span>
+                <span class="slot-arrow">→</span>
+                <span class="slot-end">{{ slot.endTime }}</span>
+              </div>
+              <div class="slot-status">
+                <span *ngIf="slot.isAvailable" class="avail-dot"></span>
+                <span *ngIf="!slot.isAvailable" class="unavail-dot"></span>
+                <span class="slot-label">{{ slot.isAvailable ? 'Disponible' : 'Indisponible' }}</span>
+              </div>
+            </div>
+
+            <button class="add-slot-btn" (click)="addSlot(day.dayIndex)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Ajouter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add slot modal -->
+      <div class="modal-backdrop" *ngIf="addingForDay() !== null" (click)="cancelAdd()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <h2>Ajouter un créneau</h2>
+          <p class="modal-day">{{ getDayName(addingForDay()!) }}</p>
+          <div class="modal-fields">
+            <div class="field-group">
+              <label>Heure de début</label>
+              <input type="time" [(ngModel)]="newStart" class="time-input" />
+            </div>
+            <div class="field-group">
+              <label>Heure de fin</label>
+              <input type="time" [(ngModel)]="newEnd" class="time-input" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="cancelAdd()">Annuler</button>
+            <button class="btn-confirm" (click)="confirmAdd()">Ajouter</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-num">{{ totalSlots() }}</span>
+          <span class="stat-lbl">Créneaux total</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num avail">{{ availableSlots() }}</span>
+          <span class="stat-lbl">Disponibles</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num hours">{{ totalHours() }}h</span>
+          <span class="stat-lbl">Consultations/semaine</span>
+        </div>
+      </div>
+    </div>
