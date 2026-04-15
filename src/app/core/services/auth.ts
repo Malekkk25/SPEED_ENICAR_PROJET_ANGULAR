@@ -64,6 +64,7 @@ export class AuthService {
       `${this.apiUrl}/login`, credentials
     ).pipe(
       tap(res => {
+        console.log('LOGIN RESPONSE:', res);
         if (res.success && res.data) {
           this.saveTokens(res.data);
           this.saveUser(res.data);
