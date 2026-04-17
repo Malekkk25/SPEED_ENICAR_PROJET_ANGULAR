@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.page {
+  padding: 2rem; max-width: 1100px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; }
+h1 { font-size: 1.75rem; font-weight: 700; color: #0d2137; margin: 0; }
+.subtitle { color: #64748b; font-size: 0.9rem; margin-top: 0.25rem; }
+
+.results-list { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.result-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #f0f4f8;
+  border-left: 5px solid #94a3b8;
+}
+
+/* Top row */
+.card-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.student-info { display: flex; align-items: center; gap: 0.75rem; }
+
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 700; color: white; flex-shrink: 0;
+}
+
+.student-name  { font-weight: 700; color: #0d2137; margin: 0; font-size: 1rem; }
+.student-email { color: #64748b; margin: 0.2rem 0 0; font-size: 0.8rem; }
+
+.score-block { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.score-value { font-size: 2.5rem; font-weight: 700; line-height: 1; }
+.score-label { font-size: 0.75rem; color: #64748b; }
+
+.risk-badge {
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+}
+
+/* Risk colors */
+.risk-critical { background: #fee2e2; color: #dc2626; }
+.risk-high      { background: #ffedd5; color: #ea580c; }
+.risk-moderate  { background: #fef9c3; color: #ca8a04; }
+.risk-low       { background: #dcfce7; color: #16a34a; }
+
+/* Avatar background per risk */
+.avatar.risk-critical { background: #dc2626; }
+.avatar.risk-high     { background: #ea580c; }
+.avatar.risk-moderate { background: #ca8a04; }
+.avatar.risk-low      { background: #16a34a; }
+
+/* Stats row */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; margin-bottom: 1.25rem;
+}
+
+.stat-box {
+  background: #f8fafc; border-radius: 10px;
+  padding: 0.875rem 1rem;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+
+.stat-value { font-size: 1.5rem; font-weight: 700; color: #0d2137; }
+.stat-value.warn { color: #dc2626; }
+.stat-label { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+
+/* Details */
+.details-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid #f0f4f8;
+}
+
+.detail-title { font-size: 0.875rem; font-weight: 700; color: #0d2137; margin: 0 0 0.5rem; }
+
+.alert-item { font-size: 0.8rem; color: #dc2626; margin: 0.25rem 0; }
+.ok-item    { font-size: 0.8rem; color: #16a34a; margin: 0; }
+.rec-item   { font-size: 0.8rem; color: #2980b9; margin: 0.25rem 0; }
+
+/* Misc */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.5rem; padding: 3rem; color: #94a3b8; text-align: center;
+}
+.empty-state svg { width: 48px; height: 48px; }
+
+.error-box { background: #fee2e2; color: #dc2626; padding: 1rem; border-radius: 10px; font-size: 0.875rem; }

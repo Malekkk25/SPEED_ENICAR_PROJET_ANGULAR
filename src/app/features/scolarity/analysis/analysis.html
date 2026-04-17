@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Analyse IA — Étudiants à risque</h1>
+      <p class="subtitle">{{ results().length }} étudiant(s) détecté(s) à risque</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="empty-state"><p>Analyse en cours...</p></div>
+  <div *ngIf="error()" class="error-box">{{ error() }}</div>
+
+  <div *ngIf="!loading() && results().length === 0" class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <p>Aucun étudiant à risque détecté ✓</p>
+  </div>
+
+  <div class="results-list" *ngIf="!loading() && results().length > 0">
+    <div class="result-card" *ngFor="let r of results()"
+         [style.border-left-color]="borderColor(r.riskLevel)">
+
+      <div class="card-top">
+        <div class="student-info">
+          <div class="avatar" [ngClass]="riskColor(r.riskLevel)">
+            {{ r.studentName ? r.studentName[0] : '?' }}
+          </div>
+          <div>
+            <p class="student-name">{{ r.studentName ?? 'Étudiant #' + r.studentId }}</p>
+            <p class="student-email">{{ r.studentEmail }}</p>
+          </div>
+        </div>
+        <div class="score-block">
+          <span class="score-value" [ngClass]="riskColor(r.riskLevel)">{{ r.riskScore }}</span>
+          <span class="score-label">Score de risque</span>
+          <span class="risk-badge" [ngClass]="riskColor(r.riskLevel)">
+            {{ riskLabel(r.riskLevel) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-value">{{ r.averageGradePercent | number:'1.0-0' }}%</span>
+          <span class="stat-label">Moyenne</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value warn">{{ r.unjustifiedAbsences }}</span>
+          <span class="stat-label">Absences injustifiées</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value warn">{{ r.totalAbsenceDays }}</span>
+          <span class="stat-label">Jours d'absence</span>
+        </div>
+      </div>
+
+      <div class="details-row">
+        <div class="detail-col">
+          <p class="detail-title">Alertes détectées</p>
+          <div *ngIf="r.alerts?.length; else noAlerts">
+            <p class="alert-item" *ngFor="let a of r.alerts">⚠ {{ a }}</p>
+          </div>
+          <ng-template #noAlerts>
+            <p class="ok-item">✓ Aucune alerte — étudiant dans les normes</p>
+          </ng-template>
+        </div>
+        <div class="detail-col">
+          <p class="detail-title">Recommandations</p>
+          <p class="rec-item" *ngFor="let rec of r.recommendations">→ {{ rec }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

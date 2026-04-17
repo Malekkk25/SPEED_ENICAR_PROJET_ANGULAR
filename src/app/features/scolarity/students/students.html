@@ -1,0 +1,144 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Dossiers étudiants</h1>
+      <p class="subtitle">{{ students().length }} étudiant(s) enregistré(s)</p>
+    </div>
+    <button class="btn-primary" (click)="openForm()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Nouvel étudiant
+    </button>
+  </div>
+
+  <!-- Formulaire modal -->
+  <div class="modal-overlay" *ngIf="showForm()" (click)="closeForm()"></div>
+  <div class="modal" *ngIf="showForm()">
+    <div class="modal-header">
+      <h2>Nouvel étudiant</h2>
+      <button class="close-btn" (click)="closeForm()">✕</button>
+    </div>
+
+    <div class="form-error" *ngIf="formError()">{{ formError() }}</div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Prénom <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.firstName" placeholder="Ex: Ahmed" />
+      </div>
+      <div class="form-group">
+        <label>Nom <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.lastName" placeholder="Ex: BenAli" />
+      </div>
+      <div class="form-group">
+        <label>Email <span class="required">*</span></label>
+        <input type="email" [(ngModel)]="form.email" placeholder="ahmed@enicar.tn" />
+      </div>
+      <div class="form-group">
+        <label>N° Étudiant <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.studentId" placeholder="ENI2025001" />
+      </div>
+      <div class="form-group">
+        <label>Département</label>
+        <select [(ngModel)]="form.department">
+          <option value="">-- Choisir --</option>
+          <option>Genie Logiciel</option>
+          <option>Informatique</option>
+          <option>Genie Civil</option>
+          <option>Genie Electrique</option>
+          <option>Genie Mecanique</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Niveau</label>
+        <select [(ngModel)]="form.level">
+          <option value="">-- Choisir --</option>
+          <option>L1</option>
+          <option>L2</option>
+          <option>L3</option>
+          <option>M1</option>
+          <option>M2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Année d'inscription</label>
+        <input type="number" [(ngModel)]="form.enrollmentYear" min="2020" max="2030" />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeForm()">Annuler</button>
+      <button class="btn-save" (click)="submitForm()" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement...' : 'Créer l\'étudiant' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Rechercher un étudiant..." (input)="onSearch($event)" />
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="empty-state"><p>Chargement...</p></div>
+  <div *ngIf="error()" class="error-box">{{ error() }}</div>
+
+  <div *ngIf="!loading() && filtered.length === 0" class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+    </svg>
+    <p>Aucun étudiant trouvé</p>
+  </div>
+
+  <div class="table-card" *ngIf="!loading() && filtered.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Étudiant</th>
+          <th>Département</th>
+          <th>Niveau</th>
+          <th>Année</th>
+          <th>Absences injustifiées</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filtered">
+          <td>
+            <div class="student-cell">
+              <div class="avatar">{{ initials(s) }}</div>
+              <div>
+                <p class="student-name">{{ s.firstName }} {{ s.lastName }}</p>
+                <p class="student-email">{{ s.email }}</p>
+              </div>
+            </div>
+          </td>
+          <td>{{ s.department }}</td>
+          <td>{{ s.level }}</td>
+          <td>{{ s.enrollmentYear }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-red]="s.unjustifiedAbsencesCount > 0"
+              [class.badge-green]="s.unjustifiedAbsencesCount === 0">
+              {{ s.unjustifiedAbsencesCount }}
+            </span>
+          </td>
+          <td>
+            <span [class.text-red]="s.averageGrade < 10"
+                  [class.text-green]="s.averageGrade >= 10">
+              {{ s.averageGrade | number:'1.1-1' }} %
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

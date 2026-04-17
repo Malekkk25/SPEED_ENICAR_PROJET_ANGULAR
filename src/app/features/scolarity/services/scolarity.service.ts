@@ -55,12 +55,38 @@ export class ScolarityService {
     );
   }
 
+  // ── ABSENCES ──────────────────────────────────────
+
   getProlongedAbsences(days = 3): Observable<Absence[]> {
     return this.http.get<Absence[]>(
       this.apiUrl + '/absences/prolonged?days=' + days,
       { headers: this.headers() }
     );
   }
+ justifyAbsence(id: number, justified: boolean): Observable<Absence> {
+  return this.http.put<Absence>(
+    this.apiUrl + '/absences/' + id + '/justify?justified=' + justified,
+    {},
+    { headers: this.headers() }
+  );
+}
+createStudent(data: {
+  email: string;
+  firstName: string;
+  lastName: string;
+  studentId: string;
+  department: string;
+  level: string;
+  enrollmentYear: number;
+}): Observable<StudentDossier> {
+  return this.http.post<StudentDossier>(
+    this.apiUrl + '/students',
+    data,
+    { headers: this.headers() }
+  );
+}
+
+  // ── ANALYSE IA ────────────────────────────────────
 
   analyzeStudent(id: number): Observable<AnalysisResult> {
     return this.http.post<AnalysisResult>(
