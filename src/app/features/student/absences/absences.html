@@ -1,0 +1,107 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Mes absences</h1>
+      <p class="subtitle">Suivez vos absences et leur statut</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrap blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-value">{{ absences().length }}</span>
+        <span class="stat-label">TOTAL ABSENCES</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-value">{{ unjustifiedCount() }}</span>
+        <span class="stat-label">NON JUSTIFIÉES</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-value">{{ absences().length - unjustifiedCount() }}</span>
+        <span class="stat-label">JUSTIFIÉES</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="activeFilter() === 'ALL'" (click)="setFilter('ALL')">
+      Toutes <span class="tab-badge">{{ absences().length }}</span>
+    </button>
+    <button class="tab" [class.active]="activeFilter() === 'UNJUSTIFIED'" (click)="setFilter('UNJUSTIFIED')">
+      Non justifiées <span class="tab-badge">{{ unjustifiedCount() }}</span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div *ngIf="loading()" class="loading">Chargement...</div>
+    <div *ngIf="!loading() && filteredAbsences().length === 0" class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <p>Aucune absence trouvée</p>
+    </div>
+    <table class="table" *ngIf="!loading() && filteredAbsences().length > 0">
+      <thead>
+        <tr>
+          <th>Période</th>
+          <th>Durée</th>
+          <th>Matière</th>
+          <th>Motif</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row" *ngFor="let absence of filteredAbsences()">
+          <td>
+            <p class="date-value">{{ absence.startDate | date:'dd/MM/yyyy' }}</p>
+            <p class="date-sub" *ngIf="absence.endDate !== absence.startDate">→ {{ absence.endDate | date:'dd/MM/yyyy' }}</p>
+          </td>
+          <td>
+            <span class="pill" [class.pill-warning]="absence.isProlonged">
+              {{ absence.durationInDays }} jour(s){{ absence.isProlonged ? ' ⚠️' : '' }}
+            </span>
+          </td>
+          <td><p class="subject-text">{{ absence.subject || '—' }}</p></td>
+          <td><p class="reason-text">{{ absence.reason || '—' }}</p></td>
+          <td>
+            <span class="status-badge" [class]="getStatusClass(absence.justified)">
+              {{ getStatusLabel(absence.justified) }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

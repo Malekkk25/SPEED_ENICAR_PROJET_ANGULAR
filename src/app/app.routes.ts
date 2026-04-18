@@ -12,6 +12,12 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['PSYCHOLOGIST'] },
   },
+    {
+    path: 'student',
+    loadChildren: () => import('./features/student/student.routes').then(m => m.studentRoutes),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['STUDENT'] },
+  },
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: '**', redirectTo: 'auth/login' },
 ];
