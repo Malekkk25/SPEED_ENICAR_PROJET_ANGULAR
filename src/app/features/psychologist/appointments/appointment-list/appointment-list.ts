@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   PsychologistService,
   Appointment,
   Page
 }  from '../../../../core/services/psychologist';
+import { ConsultationService } from '../../../../core/services/consultation-service.service';
 
 @Component({
   selector: 'app-appointment-list',
@@ -17,6 +18,8 @@ import {
 })
 export class AppointmentListComponent implements OnInit {
   private svc = inject(PsychologistService);
+  private readonly consultationSvc = inject(ConsultationService);
+  private router = inject(Router);
 
   allAppointments = signal<Appointment[]>([]);
   pendingList = signal<Appointment[]>([]);
@@ -57,7 +60,19 @@ export class AppointmentListComponent implements OnInit {
     this.loadPending();
     this.loadToday();
   }
-
+// Dans appointment-list.ts (n'oublie pas d'injecter ConsultationService)
+joinConsultation(a: Appointment) {
+  this.consultationSvc.createSession(a.id).subscribe({
+    next: (session) => {
+      // Le backend a créé la salle et envoyé les emails !
+      this.router.navigate(['/psychologist/consultation/room', session.roomId]);
+    },
+    error: (err) => {
+      console.error("Erreur backend :", err);
+      alert("Erreur lors de la création de la session. Vérifiez le backend.");
+    }
+  });
+}
   load() { this.loadAll(); }
 
   loadAll(page = 0) {

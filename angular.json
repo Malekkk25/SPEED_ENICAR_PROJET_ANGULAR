@@ -21,17 +21,33 @@
             "outputPath": "dist/speed-psychologist",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "src/polyfills.ts",
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.json",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
             "scripts": []
           },
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
-                { "type": "anyComponentStyle", "maximumWarning": "2kb", "maximumError": "4kb" }
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
               ],
               "outputHashing": "all"
             },
@@ -46,8 +62,12 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": { "buildTarget": "speed-psychologist:build:production" },
-            "development": { "buildTarget": "speed-psychologist:build:development" }
+            "production": {
+              "buildTarget": "speed-psychologist:build:production"
+            },
+            "development": {
+              "buildTarget": "speed-psychologist:build:development"
+            }
           },
           "defaultConfiguration": "development"
         }

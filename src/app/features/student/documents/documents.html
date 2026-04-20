@@ -1,0 +1,105 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Documents médicaux</h1>
+      <p class="subtitle">Déposez et suivez vos certificats et justificatifs</p>
+    </div>
+    <button class="btn-primary" (click)="showForm.set(!showForm())">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      {{ showForm() ? 'Annuler' : 'Déposer un document' }}
+    </button>
+  </div>
+
+  <!-- Formulaire -->
+  <div *ngIf="showForm()" class="card form-card">
+    <div class="form-section-title">NOUVEAU DOCUMENT</div>
+    <div class="upload-zone">
+      <input type="file" id="fileInput" class="file-input" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"/>
+      <label for="fileInput" class="upload-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;color:#94a3b8">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p *ngIf="!selectedFile">Cliquez pour sélectionner un fichier</p>
+        <p *ngIf="selectedFile" class="file-selected">{{ selectedFile.name }}</p>
+        <p class="upload-hint">PDF, JPG, PNG acceptés</p>
+      </label>
+    </div>
+    <textarea class="textarea-field" [(ngModel)]="description"
+      placeholder="Description du document (optionnel)..." rows="3">
+    </textarea>
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="showForm.set(false)">Annuler</button>
+      <button class="btn-primary" [disabled]="!selectedFile || uploading()" (click)="uploadDocument()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ uploading() ? 'Envoi en cours...' : 'Envoyer' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filter-tabs">
+    <button class="tab" [class.active]="activeFilter() === 'ALL'" (click)="setFilter('ALL')">Tous</button>
+    <button class="tab" [class.active]="activeFilter() === 'PENDING'" (click)="setFilter('PENDING')">En attente</button>
+    <button class="tab" [class.active]="activeFilter() === 'VALIDATED'" (click)="setFilter('VALIDATED')">Validés</button>
+    <button class="tab" [class.active]="activeFilter() === 'REJECTED'" (click)="setFilter('REJECTED')">Rejetés</button>
+  </div>
+
+  <!-- Liste -->
+  <div class="card">
+    <div *ngIf="loading()" class="loading">Chargement...</div>
+    <div *ngIf="!loading() && filteredDocuments().length === 0" class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <p>Aucun document déposé</p>
+      <button class="btn-primary" (click)="showForm.set(true)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Déposer un document
+      </button>
+    </div>
+    <table class="table" *ngIf="!loading() && filteredDocuments().length > 0">
+      <thead>
+        <tr>
+          <th>Fichier</th>
+          <th>Taille</th>
+          <th>Date de dépôt</th>
+          <th>Statut</th>
+          <th>Remarque</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row" *ngFor="let doc of filteredDocuments()">
+          <td>
+            <div class="file-cell">
+              <div class="file-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </div>
+              <p class="file-name">{{ doc.fileName }}</p>
+            </div>
+          </td>
+          <td><span class="pill">{{ formatFileSize(doc.fileSize) }}</span></td>
+          <td><p class="date-value">{{ doc.createdAt | date:'dd/MM/yyyy' }}</p></td>
+          <td><span class="status-badge" [class]="getStatusClass(doc.status)">{{ getStatusLabel(doc.status) }}</span></td>
+          <td><p class="reason-text">{{ doc.rejectionReason || '—' }}</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

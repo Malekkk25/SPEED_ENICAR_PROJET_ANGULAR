@@ -1,0 +1,52 @@
+<!-- start-consultation-button.component.html -->
+<div class="consult-launcher">
+
+  <!-- Psychologue : créer + lancer la salle -->
+  @if (role === 'PSYCHOLOGIST') {
+    <button class="btn-launch" [class.btn-loading]="loading()" (click)="createAndJoin()" [disabled]="loading()">
+      @if (loading()) {
+        <span class="btn-spinner"></span>
+        <span>Ouverture en cours…</span>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
+        <span>Démarrer la consultation vidéo</span>
+      }
+    </button>
+
+    @if (roomId()) {
+      <div class="room-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        <span>Salle : <code>{{ roomId()!.substring(0,8) }}…</code></span>
+      </div>
+    }
+  }
+
+  <!-- Étudiant : rejoindre la salle existante -->
+  @if (role === 'STUDENT') {
+    @if (roomId()) {
+      <button class="btn-join" [class.btn-loading]="loading()" (click)="joinRoom()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="btn-spinner btn-spinner-white"></span>
+          <span>Connexion…</span>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.87v6.26a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/>
+          </svg>
+          <span>Rejoindre la consultation</span>
+        }
+      </button>
+    } @else {
+      <div class="waiting-msg">
+        <span class="waiting-dot"></span>
+        <span>En attente que le psychologue ouvre la salle…</span>
+      </div>
+    }
+  }
+
+</div>
