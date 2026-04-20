@@ -1,0 +1,137 @@
+/* start-consultation-button.component.scss — style SPEED */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.consult-launcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── Bouton psychologue (bleu) ─────────────────────────────────────────── */
+.btn-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #1a4f82;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(26, 79, 130, 0.25);
+
+  svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  &:hover:not(:disabled) {
+    background: #153f6a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(26, 79, 130, 0.35);
+  }
+
+  &:active:not(:disabled) { transform: translateY(0); }
+
+  &:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  &.btn-loading {
+    background: #2563eb;
+    pointer-events: none;
+  }
+}
+
+/* ─── Bouton étudiant (vert) ────────────────────────────────────────────── */
+.btn-join {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+
+  svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  &:hover:not(:disabled) {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+  }
+
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled { opacity: 0.65; cursor: not-allowed; }
+  &.btn-loading { pointer-events: none; opacity: 0.8; }
+}
+
+/* ─── Spinner inline ────────────────────────────────────────────────────── */
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+.btn-spinner-white { border-color: rgba(255,255,255,0.3); border-top-color: #fff; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Room info ─────────────────────────────────────────────────────────── */
+.room-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f0f4f8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  align-self: flex-start;
+
+  svg { width: 13px; height: 13px; color: #1a4f82; flex-shrink: 0; }
+
+  code {
+    font-family: 'Courier New', monospace;
+    color: #1a4f82;
+    font-weight: 600;
+  }
+}
+
+/* ─── Waiting message ───────────────────────────────────────────────────── */
+.waiting-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.825rem;
+  color: #94a3b8;
+  background: #f8fafc;
+  border: 1px dashed #e2e8f0;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+}
+
+.waiting-dot {
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}

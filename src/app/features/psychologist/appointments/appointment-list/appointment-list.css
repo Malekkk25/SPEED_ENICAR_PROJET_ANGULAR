@@ -64,3 +64,4 @@
     .page-btn:hover:not(:disabled) { background: #dbeafe; border-color: #2563eb; color: #2563eb; }
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .page-info { font-size: 0.8rem; color: #64748b; }
+.icon-btn.join:hover { background: #dbeafe; color: #2563eb; border-color: #2563eb; }

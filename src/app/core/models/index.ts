@@ -220,3 +220,63 @@ export interface PsychologistDashboardStats {
   recentAlerts: StudentAlert[];
   todaySchedule: Appointment[];
 }
+
+// src/app/core/notifications/models/notification.models.ts
+// Ajouter ces types à votre modèle de notification existant
+
+export type NotificationType =
+  | 'CONSULTATION_SESSION_READY'
+  | 'CONSULTATION_SESSION_STARTED'
+  | 'CONSULTATION_SESSION_ENDED'
+  | 'APPOINTMENT_REMINDER'
+  | string; // Types existants
+
+export interface AppNotification {
+  id: number;
+  title: string;
+  message: string;
+  type: NotificationType;
+  actionUrl?: string;
+  read: boolean;
+  createdAt: string;
+  data?: Record<string, unknown>;
+}
+
+// Données spécifiques à une notification de consultation
+export interface ConsultationNotificationData {
+  roomId: string;
+  appointmentId: number;
+  psychologistName?: string;
+  studentName?: string;
+}
+
+export enum SessionStatus {
+  WAITING = 'WAITING',
+  ACTIVE = 'ACTIVE',
+  ENDED = 'ENDED',
+  ABANDONED = 'ABANDONED'
+}
+export interface ConsultationSession {
+  // --- Champs hérités de BaseEntity (à adapter selon votre BaseEntity Java) ---
+  id?: number; 
+  createdAt?: string; 
+  updatedAt?: string; 
+  deleted?: boolean;
+
+  // --- Champs propres à ConsultationSession ---
+  // Remplacez "any" par l'interface "Appointment" si vous l'avez créée côté Angular
+  appointment?: any;
+  appointmentId?: number;
+
+  roomId: string;
+  status: SessionStatus;
+  
+  // En TypeScript/JavaScript, il est généralement préférable de typer 
+  // les dates reçues d'une API (JSON) sous forme de chaînes (string)
+  startedAt?: string; 
+  endedAt?: string;
+  studentJoinedAt?: string;
+  psychologistJoinedAt?: string;
+  
+  durationMinutes?: number;
+}

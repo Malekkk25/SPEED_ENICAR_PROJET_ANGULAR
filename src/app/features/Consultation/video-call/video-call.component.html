@@ -1,0 +1,189 @@
+<!-- video-call.component.html -->
+<div class="vc-shell">
+
+  <!-- ── LOADING ─────────────────────────────────────────────────────────── -->
+  @if (callState() === 'loading') {
+    <div class="overlay-screen">
+      <div class="overlay-card">
+        <div class="eni-logo-box">
+          <span class="eni-en">EN</span>
+          <span class="eni-div"></span>
+          <div class="eni-text">
+            <span class="eni-carthage">Carthage</span>
+            <span class="eni-school">Engineering School</span>
+          </div>
+        </div>
+        <div class="spinner-wrap">
+          <div class="spinner"></div>
+        </div>
+        <p class="overlay-title">Initialisation de la consultation…</p>
+        <p class="overlay-sub">Vérification de vos autorisations caméra et microphone</p>
+      </div>
+    </div>
+  }
+
+  <!-- ── ERROR ──────────────────────────────────────────────────────────── -->
+  @if (callState() === 'error') {
+    <div class="overlay-screen">
+      <div class="overlay-card">
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <p class="overlay-title">Impossible de rejoindre</p>
+        <p class="overlay-sub">{{ errorMsg() }}</p>
+        <button class="btn-primary" (click)="goBack()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Retour aux rendez-vous
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── ENDED ──────────────────────────────────────────────────────────── -->
+  @if (callState() === 'ended') {
+    <div class="overlay-screen">
+      <div class="overlay-card">
+        <div class="ended-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.59a16 16 0 0 0 6.5 6.5l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <p class="overlay-title">Consultation terminée</p>
+        @if (session()?.durationMinutes) {
+          <div class="duration-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Durée : {{ session()?.durationMinutes }} min
+          </div>
+        }
+        <p class="overlay-sub redirect-hint">Redirection en cours…</p>
+      </div>
+    </div>
+  }
+
+  <!-- ── CALL ACTIVE ─────────────────────────────────────────────────────── -->
+  @if (['waiting','connecting','active'].includes(callState())) {
+
+    <!-- Vidéo distante -->
+    <div class="remote-wrapper">
+      <video #remoteVideo class="remote-video" autoplay playsinline
+             [class.hidden]="callState() !== 'active'"></video>
+
+      <!-- Waiting overlay -->
+      @if (callState() !== 'active') {
+        <div class="waiting-overlay">
+          <div class="waiting-card">
+            <div class="waiting-avatar">
+              {{ peerInitials() }}
+            </div>
+            <div class="spinner-sm"></div>
+            <p class="waiting-name">{{ peerName() || 'Participant' }}</p>
+            <p class="waiting-status">
+              @if (callState() === 'waiting') { En attente de connexion… }
+              @else { Connexion en cours… }
+            </p>
+          </div>
+        </div>
+      }
+
+      <!-- Peer name overlay (active) -->
+      @if (callState() === 'active') {
+        <div class="peer-name-overlay">
+          <span>{{ peerName() }}</span>
+        </div>
+      }
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <div class="eni-badge">
+            <span class="eni-badge-text">SPEED</span>
+          </div>
+          <span class="session-label">Consultation confidentielle</span>
+        </div>
+        @if (callState() === 'active') {
+          <div class="duration-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ formattedDuration }}
+          </div>
+        }
+        @if (callState() === 'waiting' || callState() === 'connecting') {
+          <div class="status-badge-top">
+            <span class="status-dot-pulse"></span>
+            En attente…
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Vidéo locale -->
+    <div class="local-wrapper" [class.audio-only]="!videoOn()">
+      <video #localVideo class="local-video" autoplay playsinline muted
+             [class.hidden]="!videoOn()"></video>
+      @if (!videoOn()) {
+        <div class="local-avatar">
+          {{ selfInitials() }}
+        </div>
+      }
+      <div class="local-label">Vous</div>
+    </div>
+
+    <!-- Barre de contrôles -->
+    <div class="controls-bar">
+      <!-- Micro -->
+      <button class="ctrl-btn" [class.ctrl-off]="!audioOn()"
+              (click)="toggleAudio()"
+              [title]="audioOn() ? 'Couper le micro' : 'Activer le micro'">
+        @if (audioOn()) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23M12 19v4M8 23h8"/>
+          </svg>
+        }
+        <span class="ctrl-label">{{ audioOn() ? 'Micro' : 'Muet' }}</span>
+      </button>
+
+      <!-- Raccrocher -->
+      <button class="ctrl-btn ctrl-hangup" (click)="hangUp()" title="Terminer l'appel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.59a16 16 0 0 0 6.5 6.5l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="ctrl-label">Terminer</span>
+      </button>
+
+      <!-- Caméra -->
+      <button class="ctrl-btn" [class.ctrl-off]="!videoOn()"
+              (click)="toggleVideo()"
+              [title]="videoOn() ? 'Couper la caméra' : 'Activer la caméra'">
+        @if (videoOn()) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        }
+        <span class="ctrl-label">{{ videoOn() ? 'Caméra' : 'Arrêtée' }}</span>
+      </button>
+    </div>
+  }
+
+</div>
