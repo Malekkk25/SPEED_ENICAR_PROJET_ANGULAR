@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';import { PsychologistShellComponent } from './shared/psychologist-shell/psychologist-shell';
+import { authGuard, roleGuard } from '../../core/guards/guards-guard';
 export const psychologistRoutes: Routes = [
   {
     path: '',
@@ -49,6 +50,18 @@ export const psychologistRoutes: Routes = [
         path: 'schedule',
         loadComponent: () => import('./schedule/schedule').then(m => m.ScheduleComponent),
       },
+        {
+    path: 'consultation/room/:roomId',
+    loadComponent: () =>
+      import('./../Consultation/video-call/video-call.component').then(
+        m => m.VideoCallComponent
+      ),
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['STUDENT', 'PSYCHOLOGIST'],
+      fullScreen: true,
+    },
+  },
     ],
   },
 ];

@@ -1,0 +1,88 @@
+<!-- notification-bell.component.html -->
+<div class="bell-wrap">
+
+  <!-- Bouton cloche -->
+  <button class="bell-btn" [class.has-unread]="(notificationSvc.unreadCount$ | async)! > 0"
+          (click)="toggleDropdown()" [attr.aria-expanded]="open()" title="Notifications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+    @if ((notificationSvc.unreadCount$ | async)! > 0) {
+      <span class="bell-badge">{{ notificationSvc.unreadCount$ | async }}</span>
+    }
+  </button>
+
+  <!-- Dropdown -->
+  @if (open()) {
+    <div class="dropdown">
+
+      <!-- Header -->
+      <div class="dropdown-header">
+        <span class="dropdown-title">Notifications</span>
+        @if ((notificationSvc.unreadCount$ | async)! > 0) {
+          <button class="mark-all-btn" (click)="markAllRead()">Tout marquer lu</button>
+        }
+      </div>
+
+      <!-- Liste -->
+      <div class="notif-scroll">
+        @if (notificationSvc.notifications$ | async; as notifs) {
+          @if (notifs.length === 0) {
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <p>Aucune notification</p>
+            </div>
+          }
+
+          @for (notif of notifs.slice(0, 8); track notif.id) {
+            <div class="notif-item"
+                 [class.unread]="!notif.read"
+                 [class.notif-consultation]="notif.type === 'CONSULTATION_SESSION_READY'"
+                 (click)="onNotifClick(notif)">
+
+              <div class="notif-icon" [class]="'ni-' + getIconColor(notif.type)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     [innerHTML]="getIconPath(notif.type)"></svg>
+              </div>
+
+              <div class="notif-content">
+                <div class="notif-row">
+                  <span class="notif-title">{{ notif.title }}</span>
+                  <span class="notif-time">{{ notif.createdAt | date:'HH:mm' }}</span>
+                </div>
+                <p class="notif-msg">{{ notif.message }}</p>
+
+                @if (notif.type === 'CONSULTATION_SESSION_READY') {
+                  <button class="notif-action-btn" (click)="$event.stopPropagation(); onNotifClick(notif)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+                    </svg>
+                    Rejoindre
+                  </button>
+                }
+              </div>
+
+              @if (!notif.read) {
+                <span class="unread-dot"></span>
+              }
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <p>Aucune notification</p>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
