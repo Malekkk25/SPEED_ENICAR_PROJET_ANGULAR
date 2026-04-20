@@ -1,0 +1,86 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Suivi académique</h1>
+      <p class="subtitle">Consultez vos notes et votre progression</p>
+    </div>
+  </div>
+
+  <!-- Top section -->
+  <div class="top-section">
+    <div class="average-card">
+      <div class="avg-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+      </div>
+      <div>
+        <p class="average-label">MOYENNE GÉNÉRALE</p>
+        <p class="average-value">{{ average() | number:'1.1-1' }} / 20</p>
+      </div>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab" [class.active]="selectedSemester() === ''"
+        (click)="changeSemester('')">Tous</button>
+      <button *ngFor="let s of semesters" class="tab"
+        [class.active]="selectedSemester() === s"
+        (click)="changeSemester(s)">{{ s }}</button>
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="card">
+    <div *ngIf="loading()" class="loading">Chargement...</div>
+    <div *ngIf="!loading() && grades().length === 0" class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+        <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+      </svg>
+      <p>Aucune note disponible</p>
+    </div>
+    <table class="table" *ngIf="!loading() && grades().length > 0">
+      <thead>
+        <tr>
+          <th>Matière</th>
+          <th>Note</th>
+          <th>Progression</th>
+          <th>Semestre</th>
+          <th>Année</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="table-row" *ngFor="let grade of grades()">
+          <td>
+            <p class="subject-name">{{ grade.subject }}</p>
+            <p class="coefficient">Coeff. {{ grade.coefficient }}</p>
+          </td>
+          <td><p class="grade-value">{{ grade.grade }} / {{ grade.maxGrade }}</p></td>
+          <td>
+            <div class="progress-bar">
+              <div class="progress-fill"
+                [style.width]="grade.percentage + '%'"
+                [style.background]="getGradeColor(grade.percentage)">
+              </div>
+            </div>
+            <p class="percentage-text" [style.color]="getGradeColor(grade.percentage)">
+              {{ grade.percentage | number:'1.1-1' }}%
+            </p>
+          </td>
+          <td><span class="pill">{{ grade.semester }}</span></td>
+          <td><span class="pill">{{ grade.academicYear }}</span></td>
+          <td>
+            <span class="status-badge"
+              [class.badge-success]="grade.isPassing"
+              [class.badge-danger]="!grade.isPassing">
+              {{ grade.isPassing ? 'Validé' : 'Non validé' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

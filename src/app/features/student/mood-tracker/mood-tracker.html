@@ -1,0 +1,124 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Mood Tracker </h1>
+      <p class="subtitle">Suivez votre humeur au quotidien</p>
+    </div>
+    <button class="btn-primary" (click)="showForm.set(!showForm())">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      {{ showForm() ? 'Annuler' : 'Enregistrer mon humeur' }}
+    </button>
+  </div>
+
+  <!-- Info banner -->
+  <div class="info-banner" *ngIf="moods().length > 0 && moods()[0].date === today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;min-width:16px">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    Vous avez déjà enregistré votre humeur aujourd'hui. Revenez demain !
+  </div>
+
+  <!-- Formulaire -->
+  <div *ngIf="showForm()" class="card form-card">
+    <h2>Comment vous sentez-vous aujourd'hui ?</h2>
+    <div class="emoji-picker">
+      <button *ngFor="let e of emojis" class="emoji-btn"
+        [class.selected]="selectedLevel() === e.level"
+        [style.border-color]="selectedLevel() === e.level ? getMoodColor(e.level) : ''"
+        (click)="selectLevel(e.level)">
+        <span class="emoji">{{ e.emoji }}</span>
+        <span class="emoji-label">{{ e.label }}</span>
+      </button>
+    </div>
+    <textarea class="note-input" [(ngModel)]="note"
+      placeholder="Ajouter une note (optionnel)..." rows="3">
+    </textarea>
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="showForm.set(false)">Annuler</button>
+      <button class="btn-primary"
+        [disabled]="selectedLevel() === 0 || submitting()"
+        (click)="submitMood()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ submitting() ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-section">
+    <div class="stats-header">
+      <h2>Statistiques</h2>
+      <div class="filter-tabs">
+        <button class="tab" [class.active]="selectedPeriod() === 'week'"
+          (click)="changePeriod('week')">Semaine</button>
+        <button class="tab" [class.active]="selectedPeriod() === 'month'"
+          (click)="changePeriod('month')">Mois</button>
+      </div>
+    </div>
+    <div class="stats-cards" *ngIf="stats()">
+      <div class="stat-card">
+        <span class="stat-emoji">{{ getMoodEmoji(stats()!.average) }}</span>
+        <p class="stat-value">{{ stats()!.average | number:'1.1-1' }}</p>
+        <p class="stat-label">Moyenne</p>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">📊</span>
+        <p class="stat-value">{{ stats()!.totalEntries }}</p>
+        <p class="stat-label">Entrées</p>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">😟</span>
+        <p class="stat-value">{{ stats()!.negativeCount }}</p>
+        <p class="stat-label">Moments difficiles</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historique -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Historique</h2>
+    </div>
+    <div *ngIf="loading()" class="loading">Chargement...</div>
+    <div *ngIf="!loading() && moods().length === 0" class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+      <p>Aucune entrée pour le moment</p>
+    </div>
+    <div class="mood-list" *ngIf="!loading() && moods().length > 0">
+      <div class="mood-row" *ngFor="let mood of moods()">
+        <div class="mood-emoji-badge"
+          [style.background]="getMoodColor(mood.moodLevel) + '20'"
+          [style.color]="getMoodColor(mood.moodLevel)">
+          {{ getMoodEmoji(mood.moodLevel) }}
+        </div>
+        <div class="mood-info">
+          <p class="mood-label-text">{{ getMoodLabel(mood.moodLevel) }}</p>
+          <p class="mood-note" *ngIf="mood.note">{{ mood.note }}</p>
+        </div>
+        <div class="mood-date">{{ mood.date }}</div>
+        <button class="icon-btn" (click)="deleteMood(mood.id)" title="Supprimer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14H6L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
