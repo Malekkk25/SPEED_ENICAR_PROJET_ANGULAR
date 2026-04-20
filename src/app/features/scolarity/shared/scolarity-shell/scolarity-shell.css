@@ -1,0 +1,176 @@
+ .shell {
+      display: flex;
+      height: 100vh;
+      background: #f0f4f8;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      box-shadow: 2px 0 16px rgba(26,79,130,0.07);
+      z-index: 10;
+    }
+    .sidebar.collapsed { width: 72px; min-width: 72px; }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .logo-wrap { display: flex; align-items: center; justify-content: center; flex: 1; overflow: hidden; }
+
+    /* ENICarthage logo */
+    .eni-logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .eni-logo-box {
+      background: #1a4f82;
+      padding: 5px 8px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(26,79,130,0.25);
+    }
+    .eni-logo-en {
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.2rem;
+      font-style: italic;
+      line-height: 1;
+    }
+    .eni-logo-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.3);
+    }
+    .eni-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .eni-logo-carthage {
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .eni-logo-school {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.42rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .eni-logo-speed {
+      color: #1a4f82;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .collapse-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      width: 28px; height: 28px;
+      cursor: pointer;
+      color: #64748b;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .collapse-btn:hover { background: #e2e8f0; color: #1a4f82; }
+    .collapse-btn svg { width: 14px; height: 14px; }
+
+    .user-card {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+    .avatar {
+      width: 40px; height: 40px; min-width: 40px;
+      background: linear-gradient(135deg, #1a4f82, #3b82f6);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: #fff;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(26,79,130,0.2);
+    }
+    .avatar-sm { width: 36px; height: 36px; min-width: 36px; font-size: 0.75rem; }
+    .user-info { overflow: hidden; }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-email { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+    .nav-section {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em;
+      color: #94a3b8; font-weight: 700;
+      padding: 0.5rem 0.5rem 0.25rem;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: 10px;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .nav-item:hover { background: #f1f5f9; color: #1a4f82; }
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1a4f82;
+      font-weight: 600;
+    }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0;
+      top: 20%; bottom: 20%;
+      width: 3px; background: #1a4f82; border-radius: 0 3px 3px 0;
+    }
+    .nav-icon { width: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon :deep(svg) { width: 18px; height: 18px; }
+    .nav-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav-badge {
+      margin-left: auto;
+      background: #ef4444; color: #fff;
+      font-size: 0.65rem; font-weight: 700;
+      padding: 2px 6px; border-radius: 10px;
+      min-width: 18px; text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 0.75rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    .logout-btn {
+      width: 100%; display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 0.75rem; border: none; border-radius: 10px;
+      background: transparent; color: #94a3b8;
+      font-size: 0.875rem; cursor: pointer; transition: all 0.2s;
+      font-family: inherit;
+    }
+    .logout-btn:hover { background: #fff1f0; color: #ef4444; }
+    .logout-btn svg { width: 18px; height: 18px; min-width: 18px; }
+
+    .main {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column;
+    }

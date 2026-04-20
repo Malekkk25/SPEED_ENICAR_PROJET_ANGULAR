@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+.page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0d2137;
+  margin: 0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* KPI */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.kpi-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #f0f4f8;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.kpi-card:hover { transform: translateY(-2px); }
+
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-icon svg { width: 24px; height: 24px; }
+
+.kpi-blue .kpi-icon   { background: #dbeafe; color: #2563eb; }
+.kpi-orange .kpi-icon { background: #ffedd5; color: #ea580c; }
+.kpi-red .kpi-icon    { background: #fee2e2; color: #dc2626; }
+.kpi-purple .kpi-icon { background: #ede9fe; color: #7c3aed; }
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0d2137;
+  display: block;
+  line-height: 1;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pulse { animation: pulse 2s infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  50%       { box-shadow: 0 2px 20px rgba(124,58,237,0.3); }
+}
+
+/* Two columns */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #f0f4f8;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.card-header h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0d2137;
+  margin: 0;
+}
+
+.link-more {
+  font-size: 0.8rem;
+  color: #2980b9;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Actions list */
+.actions-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.action-row:hover { background: #f8fafc; }
+
+.action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-icon svg { width: 20px; height: 20px; }
+.action-icon.blue   { background: #dbeafe; color: #2563eb; }
+.action-icon.orange { background: #ffedd5; color: #ea580c; }
+.action-icon.red    { background: #fee2e2; color: #dc2626; }
+
+.action-body { flex: 1; }
+.action-title { font-size: 0.875rem; font-weight: 600; color: #1e293b; margin: 0; }
+.action-sub   { font-size: 0.75rem; color: #64748b; margin: 0; }
+.action-arrow { width: 16px; height: 16px; color: #94a3b8; }
+
+/* Alerts / risk */
+.alert-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.alert-row:hover { background: #f8fafc; }
+
+.alert-level {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.level-high { background: #ffedd5; }
+
+.alert-body { flex: 1; }
+.alert-title   { font-size: 0.875rem; font-weight: 600; color: #1e293b; margin: 0; }
+.alert-student { font-size: 0.75rem; color: #64748b; margin: 0; }
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.empty-state svg { width: 40px; height: 40px; }
+.empty-state p   { font-size: 0.875rem; }

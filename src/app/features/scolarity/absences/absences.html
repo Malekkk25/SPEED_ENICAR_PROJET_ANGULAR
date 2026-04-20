@@ -1,0 +1,80 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Absences prolongées</h1>
+      <p class="subtitle">{{ absences().length }} absence(s) détectée(s)</p>
+    </div>
+    <div class="filter-box">
+      <label>Seuil :</label>
+      <select (change)="onDaysChange($event)">
+        <option value="3">+ 3 jours</option>
+        <option value="7">+ 7 jours</option>
+        <option value="14">+ 14 jours</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="empty-state"><p>Chargement...</p></div>
+
+  <div *ngIf="!loading() && absences().length === 0" class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <p>Aucune absence prolongée détectée ✓</p>
+  </div>
+
+  <div class="table-card" *ngIf="!loading() && absences().length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Étudiant</th>
+          <th>Début</th>
+          <th>Fin</th>
+          <th>Durée</th>
+          <th>Motif</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of absences()">
+          <td><span class="student-name">{{ a.studentName }}</span></td>
+          <td>{{ a.startDate | date:'dd/MM/yyyy' }}</td>
+          <td>{{ a.endDate ? (a.endDate | date:'dd/MM/yyyy') : 'En cours' }}</td>
+          <td>
+            <span class="badge" [ngClass]="durationClass(a.durationDays)">
+              {{ a.durationDays }} j
+            </span>
+          </td>
+          <td>{{ a.reason ?? '—' }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-green]="a.justified"
+              [class.badge-red]="!a.justified">
+              {{ a.justified ? 'Justifiée' : 'Non justifiée' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              <button
+                *ngIf="!a.justified"
+                class="btn-justify"
+                [disabled]="processingId() === a.id"
+                (click)="justify(a.id, true)">
+                {{ processingId() === a.id ? '...' : '✓ Justifier' }}
+              </button>
+              <button
+                *ngIf="a.justified"
+                class="btn-unjustify"
+                [disabled]="processingId() === a.id"
+                (click)="justify(a.id, false)">
+                {{ processingId() === a.id ? '...' : '✕ Annuler' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Documents médicaux</h1>
+      <p class="subtitle">{{ documents().length }} document(s) en attente de validation</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="empty-state"><p>Chargement...</p></div>
+
+  <div *ngIf="!loading() && documents().length === 0" class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <p>Tous les documents ont été traités ✓</p>
+  </div>
+
+  <div class="doc-list" *ngIf="!loading() && documents().length > 0">
+    <div class="doc-card" *ngFor="let doc of documents()">
+      <div class="doc-header">
+        <div class="doc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="doc-info">
+          <p class="doc-name">{{ doc.fileName }}</p>
+          <p class="doc-student">{{ doc.studentName }}</p>
+          <p class="doc-meta">{{ doc.fileType }} · {{ doc.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+        <span class="badge badge-pending">EN ATTENTE</span>
+      </div>
+
+      <!-- Reject form -->
+      <div class="reject-form" *ngIf="rejectingId() === doc.id">
+        <textarea [value]="rejectReason()" (input)="onReasonChange($event)"
+          placeholder="Motif du refus (obligatoire)..." rows="3"></textarea>
+        <div class="reject-actions">
+          <button class="btn-cancel" (click)="cancelReject()">Annuler</button>
+          <button class="btn-reject-confirm" (click)="confirmReject(doc.id)"
+            [disabled]="!rejectReason().trim()">Confirmer le refus</button>
+        </div>
+      </div>
+
+      <div class="doc-actions" *ngIf="rejectingId() !== doc.id">
+        <button class="btn-validate" (click)="validate(doc.id)"
+          [disabled]="processingId() === doc.id">
+          {{ processingId() === doc.id ? 'En cours...' : '✓ Valider' }}
+        </button>
+        <button class="btn-reject" (click)="startReject(doc.id)">✕ Refuser</button>
+      </div>
+    </div>
+  </div>
+</div>
