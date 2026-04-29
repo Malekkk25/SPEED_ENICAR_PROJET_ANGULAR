@@ -5,7 +5,33 @@ import { environment } from '../../../enviroments/environment';
 import { ApiResponse } from './auth';
 
 // ── Interfaces ───────────────────────────────────────────
+export interface AvailableSlot {
+  dateTime: string;      // 👈 Ajoute cette ligne (ex: "2026-05-06T09:00:00")
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  psychologistId: number;
+  psychologistName: string;
+}
 
+export interface AppointmentRequest {
+  psychologistId: number;
+  dateTime: string;
+  reason: string;
+  type: string;
+  locationType: string;
+} // Vérifie bien qu'il n'y a plus de "slotId" ici !
+
+export interface Appointment {
+  id: number;
+  dateTime: string;
+  duration: number;
+  status: string;
+  type: string;
+  reason: string;
+  psychologistName: string;
+  locationType?: string;
+}
 export interface MoodEntry {
   id: number;
   moodLevel: number;
@@ -92,7 +118,7 @@ export interface Page<T> {
 export class StudentService {
 
   private http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/v1/student`;
+  private readonly apiUrl = `${environment.apiUrl}/student`;
 
   // ── Profil ───────────────────────────────────────────
 
@@ -181,4 +207,31 @@ export class StudentService {
   getAbsencesCount(): Observable<ApiResponse<{ unjustifiedCount: number }>> {
     return this.http.get<ApiResponse<{ unjustifiedCount: number }>>(`${this.apiUrl}/absences/count`);
   }
+  // ── Rendez-vous (Mis à jour) ─────────────────────────
+
+  /** * Récupère les rendez-vous déjà pris par l'étudiant connecté
+   */
+// Modifie cette méthode dans StudentService
+getMyAppointments(page = 0, size = 10): Observable<ApiResponse<Page<Appointment>>> {
+  const params = new HttpParams()
+    .set('page', page)
+    .set('size', size);
+  // On s'attend à recevoir un objet Page contenant le tableau 'content'
+  return this.http.get<ApiResponse<Page<Appointment>>>(`${this.apiUrl}/appointments`, { params });
+}
+
+  /** * Récupère les créneaux libres de tous les psys sur les 14 prochains jours
+   * URL finale: /api/student/appointments/available
+   */
+  getAvailableSlots(): Observable<ApiResponse<AvailableSlot[]>> {
+    return this.http.get<ApiResponse<AvailableSlot[]>>(`${this.apiUrl}/appointments/available`);
+  }
+
+  /** * Envoie la demande de réservation au backend
+   * URL finale: /api/student/appointments/reserve
+   */
+  requestAppointment(data: AppointmentRequest): Observable<ApiResponse<Appointment>> {
+    return this.http.post<ApiResponse<Appointment>>(`${this.apiUrl}/appointments/reserve`, data);
+  }
+  
 }

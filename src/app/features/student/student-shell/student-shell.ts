@@ -37,7 +37,6 @@ export class StudentShellComponent {
   navItems: NavItem[] = [
     { path: '/student/dashboard', label: 'Tableau de bord', icon: this.icon('dashboard') },
     { path: '/student/mood-tracker', label: 'Mood Tracker', icon: this.icon('smile') },
-    { path: '/student/journal', label: 'Journal de bord', icon: this.icon('book') },
     { path: '/student/appointments', label: 'Rendez-vous', icon: this.icon('calendar') },
     { path: '/student/academic', label: 'Suivi académique', icon: this.icon('graduation') },
     { path: '/student/absences', label: 'Mes absences', icon: this.icon('clock') },

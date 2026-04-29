@@ -1,22 +1,21 @@
 <div class="page">
-
   <div class="page-header">
     <div>
       <h1>Mes rendez-vous</h1>
       <p class="subtitle">Gérez vos consultations avec le psychologue</p>
     </div>
     <button class="btn-primary" (click)="showForm.set(!showForm())">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
-        <line x1="12" y1="5" x2="12" y2="19"/>
-        <line x1="5" y1="12" x2="19" y2="12"/>
+      <svg *ngIf="!showForm()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      {{ showForm() ? 'Annuler' : 'Demander un rendez-vous' }}
+      <span *ngIf="showForm()">✕</span>
+      {{ showForm() ? 'Annuler la demande' : 'Nouveau rendez-vous' }}
     </button>
   </div>
 
-  <!-- Formulaire -->
   <div *ngIf="showForm()" class="card form-card">
-    <div class="form-section-title">NOUVELLE DEMANDE</div>
+    <div class="form-section-title">Nouvelle demande de consultation</div>
+    
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Type de consultation</label>
@@ -24,82 +23,108 @@
           <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
         </select>
       </div>
+
       <div class="form-group">
-        <label class="form-label">Date souhaitée</label>
-        <input class="input-field" type="date" [(ngModel)]="selectedDate"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Heure souhaitée</label>
-        <input class="input-field" type="time" [(ngModel)]="selectedTime"/>
+        <label class="form-label">Mode de rencontre</label>
+        <select class="select-field" [(ngModel)]="locationType">
+          <option value="PRESENTIAL">📍 Présentiel (Sur place)</option>
+          <option value="ONLINE">💻 En ligne (Vidéoconférence)</option>
+        </select>
       </div>
     </div>
+
+    <div class="form-group">
+      <label class="form-label">Créneau disponible</label>
+      <select class="select-field" [(ngModel)]="selectedSlot">
+        <option [ngValue]="null" disabled selected>Choisir une date et heure...</option>
+        <option *ngFor="let slot of availableSlots()" [ngValue]="slot">
+          {{ slot.dayOfWeek }} {{ slot.dateTime | date:'dd/MM' }} à {{ slot.startTime }} — Dr. {{ slot.psychologistName }}
+        </option>
+      </select>
+      <p class="date-sub" *ngIf="availableSlots().length === 0" style="color: #dc2626;">
+        ⚠️ Aucun créneau n'est disponible pour le moment.
+      </p>
+    </div>
+
     <div class="form-group">
       <label class="form-label">Motif de la consultation</label>
-      <textarea class="textarea-field" [(ngModel)]="reason"
-        placeholder="Décrivez brièvement le motif..." rows="4">
-      </textarea>
+      <textarea class="textarea-field" [(ngModel)]="reason" 
+                placeholder="Expliquez brièvement votre besoin..." rows="3"></textarea>
     </div>
+
     <div class="form-actions">
-      <button class="btn-secondary" (click)="showForm.set(false); resetForm()">Annuler</button>
-      <button class="btn-primary"
-        [disabled]="!reason.trim() || !selectedDate || !selectedTime || submitting()"
-        (click)="submitAppointment()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        {{ submitting() ? 'Envoi...' : 'Envoyer la demande' }}
+      <button class="btn-secondary" (click)="showForm.set(false); resetForm()">Fermer</button>
+      <button class="btn-primary" 
+              [disabled]="!reason.trim() || !selectedSlot || submitting()" 
+              (click)="submitAppointment()">
+        <span *ngIf="!submitting()">Confirmer la réservation</span>
+        <span *ngIf="submitting()">Envoi en cours...</span>
       </button>
     </div>
   </div>
 
-  <!-- Filtres -->
   <div class="filter-tabs">
     <button class="tab" [class.active]="activeFilter() === 'ALL'" (click)="setFilter('ALL')">
-      Tous <span class="tab-badge">{{ appointments().length }}</span>
+      Tous
     </button>
-    <button class="tab" [class.active]="activeFilter() === 'PENDING'" (click)="setFilter('PENDING')">En attente</button>
-    <button class="tab" [class.active]="activeFilter() === 'CONFIRMED'" (click)="setFilter('CONFIRMED')">Confirmés</button>
-    <button class="tab" [class.active]="activeFilter() === 'COMPLETED'" (click)="setFilter('COMPLETED')">Terminés</button>
-    <button class="tab" [class.active]="activeFilter() === 'CANCELLED'" (click)="setFilter('CANCELLED')">Annulés</button>
+    <button class="tab" [class.active]="activeFilter() === 'PENDING'" (click)="setFilter('PENDING')">
+      En attente <span class="tab-badge" *ngIf="appointments().length > 0"></span>
+    </button>
+    <button class="tab" [class.active]="activeFilter() === 'CONFIRMED'" (click)="setFilter('CONFIRMED')">
+      Confirmés
+    </button>
+    <button class="tab" [class.active]="activeFilter() === 'CANCELLED'" (click)="setFilter('CANCELLED')">
+      Annulés
+    </button>
   </div>
 
-  <!-- Liste -->
   <div class="card">
-    <div *ngIf="loading()" class="loading">Chargement...</div>
-    <div *ngIf="!loading() && filteredAppointments().length === 0" class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-      <p>Aucun rendez-vous pour ce filtre</p>
+    <div *ngIf="loading()" class="loading">
+      Chargement de vos rendez-vous...
     </div>
+
     <table class="table" *ngIf="!loading() && filteredAppointments().length > 0">
       <thead>
         <tr>
           <th>Date & Heure</th>
-          <th>Type</th>
           <th>Psychologue</th>
           <th>Motif</th>
-          <th>Durée</th>
+          <th>Type</th>
           <th>Statut</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="table-row" *ngFor="let appt of filteredAppointments()">
+        <tr *ngFor="let app of filteredAppointments()" class="table-row">
           <td>
-            <p class="date-value">{{ appt.dateTime | date:'dd/MM/yyyy' }}</p>
-            <p class="date-sub">{{ appt.dateTime | date:'HH:mm' }}</p>
+            <p class="date-value">{{ app.dateTime | date:'dd MMM yyyy' }}</p>
+            <p class="date-sub">{{ app.dateTime | date:'HH:mm' }}</p>
           </td>
-          <td><span class="type-badge" [class]="getTypeClass(appt.type)">{{ getTypeLabel(appt.type) }}</span></td>
-          <td><p class="name-text">{{ appt.psychologistName || '—' }}</p></td>
-          <td><p class="reason-text">{{ appt.reason }}</p></td>
-          <td><span class="pill">{{ appt.duration }} min</span></td>
-          <td><span class="status-badge" [class]="getStatusClass(appt.status)">{{ getStatusLabel(appt.status) }}</span></td>
+          <td>
+            <p class="name-text">{{ app.psychologistName }}</p>
+            <span class="pill">{{ app.locationType === 'ONLINE' ? '💻 Distanciel' : '📍 Présentiel' }}</span>
+          </td>
+          <td>
+            <p class="reason-text">{{ app.reason || 'Aucun motif précisé' }}</p>
+          </td>
+          <td>
+            <span class="type-badge" [ngClass]="getTypeClass(app.type)">
+              {{ getTypeLabel(app.type) }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(app.status)">
+              {{ getStatusLabel(app.status) }}
+            </span>
+          </td>
         </tr>
       </tbody>
     </table>
-  </div>
 
+    <div class="empty-state" *ngIf="!loading() && filteredAppointments().length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <p>Aucun rendez-vous trouvé dans cette catégorie.</p>
+    </div>
+  </div>
 </div>

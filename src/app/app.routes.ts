@@ -24,13 +24,13 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['SCOLARITY'] },
 
-
+  },
     {
     path: 'student',
     loadChildren: () => import('./features/student/student.routes').then(m => m.studentRoutes),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['STUDENT'] },
-
+    },
   {
     path: 'consultation/room/:roomId',
     loadComponent: () =>
