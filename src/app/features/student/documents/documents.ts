@@ -1,18 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { StudentService } from '../../../core/services/student';
+import { MedicalDocumentResponse, StudentService } from '../../../core/services/student';
 
-export interface MedicalDocument {
-  id: number;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-  status: string;
-  validationDate: string;
-  rejectionReason: string;
-  createdAt: string;
-}
+
+
 
 @Component({
   selector: 'app-documents',
@@ -24,8 +16,7 @@ export interface MedicalDocument {
 export class DocumentsComponent implements OnInit {
   private svc = inject(StudentService);
 
-  documents = signal<MedicalDocument[]>([]);
-  loading = signal(true);
+
   uploading = signal(false);
   showForm = signal(false);
   activeFilter = signal<string>('ALL');
@@ -34,14 +25,46 @@ export class DocumentsComponent implements OnInit {
   selectedFile: File | null = null;
   description = '';
 
-  ngOnInit() {
-    this.loadDocuments();
-  }
+ngOnInit() {
+  this.loadDocuments(); // 👈 Indispensable pour remplir le signal au chargement !
+}
 
-  loadDocuments() {
-    this.loading.set(true);
-    // À connecter avec le service documents
-    this.loading.set(false);
+// Dans ta classe de composant
+documents = signal<MedicalDocumentResponse[]>([]); // Initialise avec un tableau vide
+loading = signal<boolean>(false);
+
+loadDocuments() {
+  this.loading.set(true);
+  this.svc.getDocuments().subscribe({
+    next: (res) => {
+      // res.data contient maintenant bien la liste 
+      this.documents.set(res.data); 
+      this.loading.set(false);
+    },
+    error: (err) => {
+      console.error('Erreur chargement documents', err);
+      this.loading.set(false);
+    }
+  });
+}
+
+  uploadDocument() {
+    if (!this.selectedFile) return;
+    this.uploading.set(true);
+
+    this.svc.uploadDocument(this.selectedFile, this.description).subscribe({
+      next: (res) => {
+        this.uploading.set(false);
+        this.showForm.set(false);
+        this.selectedFile = null;
+        this.description = '';
+        this.loadDocuments(); // Recharge la vraie liste depuis le backend
+      },
+      error: (err) => {
+        console.error('Erreur upload', err);
+        this.uploading.set(false);
+      }
+    });
   }
 
   onFileSelected(event: Event) {
@@ -60,19 +83,8 @@ export class DocumentsComponent implements OnInit {
     this.activeFilter.set(filter);
   }
 
-  uploadDocument() {
-    if (!this.selectedFile) return;
-    this.uploading.set(true);
 
-    // À connecter avec le service documents
-    setTimeout(() => {
-      this.uploading.set(false);
-      this.showForm.set(false);
-      this.selectedFile = null;
-      this.description = '';
-      this.loadDocuments();
-    }, 1000);
-  }
+
 
   getStatusClass(status: string): string {
     const classes: Record<string, string> = {
