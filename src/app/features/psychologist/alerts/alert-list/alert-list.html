@@ -10,10 +10,6 @@
 
   <ng-container *ngIf="!loading()">
     <div class="summary-strip">
-      <div class="summary-item critical">
-        <span class="s-count">{{ countByLevel('CRITICAL') }}</span>
-        <span class="s-label">Critique</span>
-      </div>
       <div class="summary-item high">
         <span class="s-count">{{ countByLevel('HIGH') }}</span>
         <span class="s-label">Eleve</span>
@@ -31,7 +27,6 @@
     <div class="filter-row">
       <select class="select-field" [(ngModel)]="levelFilter">
         <option value="">Tous les niveaux</option>
-        <option value="CRITICAL">Critique</option>
         <option value="HIGH">Eleve</option>
         <option value="MODERATE">Modere</option>
         <option value="LOW">Faible</option>

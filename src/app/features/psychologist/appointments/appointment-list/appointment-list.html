@@ -2,11 +2,10 @@
   <div class="page-header">
     <div>
       <h1>Rendez-vous</h1>
-      <p class="subtitle">Gerez vos consultations et demandes</p>
+      <p class="subtitle">Gérez vos consultations et demandes</p>
     </div>
   </div>
 
-  <!-- Filters -->
   <div class="filters-bar">
     <div class="filter-tabs">
       <button *ngFor="let f of statusFiltersWithCount"
@@ -26,20 +25,19 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div class="card" *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">
     Chargement...
   </div>
 
-  <!-- Table -->
   <div class="card" *ngIf="!loading()">
     <table class="table" *ngIf="appointments().length; else empty">
       <thead>
         <tr>
-          <th>Etudiant</th>
+          <th>Étudiant</th>
           <th>Date & Heure</th>
-          <th>Duree</th>
+          <th>Durée</th>
           <th>Type</th>
+          <th>Lieu</th>
           <th>Motif</th>
           <th>Statut</th>
           <th>Actions</th>
@@ -62,6 +60,13 @@
           </td>
           <td><span class="pill">{{ appt.duration }} min</span></td>
           <td><span class="type-badge" [class]="'type-' + appt.type.toLowerCase()">{{ typeLabel(appt.type) }}</span></td>
+          
+          <td>
+            <span class="location-cell" [class.text-online]="appt.locationType === 'ONLINE'">
+              {{ locationLabel(appt.locationType) }}
+            </span>
+          </td>
+
           <td class="reason-cell">{{ (appt.reason || '') | slice:0:40 }}{{ (appt.reason || '').length > 40 ? '...' : '' }}</td>
           <td><span class="status-badge" [class]="'status-' + appt.status.toLowerCase()">{{ statusLabel(appt.status) }}</span></td>
           <td>
@@ -70,10 +75,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </a>
               
-              <button *ngIf="appt.status === 'CONFIRMED'" 
+              <button *ngIf="appt.status === 'CONFIRMED' && appt.locationType === 'ONLINE'" 
                       class="icon-btn join" 
                       (click)="joinConsultation(appt)" 
-                      title="Rejoindre la consultation">
+                      title="Rejoindre la consultation en ligne">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polygon points="23 7 16 12 23 17 23 7"></polygon>
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
@@ -104,9 +109,8 @@
     </ng-template>
   </div>
 
-  <!-- Pagination -->
   <div class="pagination" *ngIf="page() && activeFilter() === 'ALL'">
-    <button class="page-btn" [disabled]="page()!.number === 0" (click)="prevPage()">Precedent</button>
+    <button class="page-btn" [disabled]="page()!.number === 0" (click)="prevPage()">Précédent</button>
     <span class="page-info">Page {{ page()!.number + 1 }} / {{ page()!.totalPages }}</span>
     <button class="page-btn" [disabled]="page()!.number >= page()!.totalPages - 1" (click)="nextPage()">Suivant</button>
   </div>

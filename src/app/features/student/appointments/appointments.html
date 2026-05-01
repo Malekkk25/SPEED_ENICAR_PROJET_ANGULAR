@@ -27,10 +27,12 @@
       <div class="form-group">
         <label class="form-label">Mode de rencontre</label>
         <select class="select-field" [(ngModel)]="locationType">
-          <option value="PRESENTIAL">📍 Présentiel (Sur place)</option>
-          <option value="ONLINE">💻 En ligne (Vidéoconférence)</option>
+    <option *ngFor="let loc of locationTypes" [value]="loc.value">
+      {{ loc.label }}
+    </option>
         </select>
       </div>
+
     </div>
 
     <div class="form-group">

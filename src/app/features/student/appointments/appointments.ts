@@ -20,7 +20,11 @@ export class AppointmentsComponent implements OnInit {
   submitting = signal(false);
   showForm = signal(false);
   activeFilter = signal<string>('ALL');
-
+  
+locationTypes = [
+  { value: 'PRESENTIAL', label: '📍 En présentiel' },
+  { value: 'ONLINE', label: '💻 En ligne' }
+];
   // Champs du formulaire
 // Champs du formulaire
   selectedSlot: AvailableSlot | null = null;

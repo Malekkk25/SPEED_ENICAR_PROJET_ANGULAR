@@ -1,7 +1,8 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth';
+import { PsychologistService } from '../../../../core/services/psychologist';
 
 interface NavItem {
   path: string;
@@ -12,36 +13,85 @@ interface NavItem {
 
 @Component({
   selector: 'app-psychologist-shell',
-   standalone: true,
+  standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
-
   templateUrl: './psychologist-shell.html',
   styleUrl: './psychologist-shell.css',
 })
-export class PsychologistShellComponent {
+export class PsychologistShellComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private psychologistService = inject(PsychologistService);
 
   sidebarCollapsed = signal(false);
   user = computed(() => this.auth.getCurrentUser());
+  
   fullName = computed(() => {
     const u = this.user();
     return u ? `Dr. ${u.firstName} ${u.lastName}` : '';
   });
+  
   initials = computed(() => {
     const u = this.user();
     return u ? `${u.firstName[0]}${u.lastName[0]}`.toUpperCase() : 'PS';
   });
 
-  navItems: NavItem[] = [
+  urgentAppointmentsCount = signal(0);
+  criticalAlertsCount = signal(0);
+
+  navItems = computed<NavItem[]>(() => [
     { path: '/psychologist/dashboard', label: 'Tableau de bord', icon: this.icon('dashboard') },
-    { path: '/psychologist/appointments', label: 'Rendez-vous', icon: this.icon('calendar'), badge: 3 },
+    { 
+      path: '/psychologist/appointments', 
+      label: 'Rendez-vous', 
+      icon: this.icon('calendar'), 
+      badge: this.urgentAppointmentsCount() > 0 ? this.urgentAppointmentsCount() : undefined 
+    },
     { path: '/psychologist/students', label: 'Étudiants suivis', icon: this.icon('users') },
     { path: '/psychologist/records', label: 'Fiches confidentielles', icon: this.icon('lock') },
-    { path: '/psychologist/documents', label: 'Documents médicaux', icon: this.icon('file') },
-    { path: '/psychologist/alerts', label: 'Alertes', icon: this.icon('bell'), badge: 2 },
+    { 
+      path: '/psychologist/alerts', 
+      label: 'Alertes', 
+      icon: this.icon('bell'), 
+      badge: this.criticalAlertsCount() > 0 ? this.criticalAlertsCount() : undefined 
+    },
     { path: '/psychologist/schedule', label: 'Mon planning', icon: this.icon('clock') },
-  ];
+  ]);
+
+  ngOnInit() {
+    this.loadBadges();
+  }
+
+  private loadBadges() {
+    // 1. Récupérer les alertes selon le niveau de risque de l'élève
+    // Assure-toi d'utiliser la méthode de ton service qui récupère les étudiants à risque
+    this.psychologistService.getStudentsAtRisk().subscribe({
+      next: (res: any) => {
+        const data = res.data ? res.data : res;
+        if (data && Array.isArray(data)) {
+          // 👈 ICI on filtre selon le niveau de l'élève (ex: HIGH ou CRITICAL)
+          const dangerCount = data.filter((student: any) => 
+            student.currentRiskLevel === 'CRITICAL' || student.currentRiskLevel === 'HIGH'
+          ).length;
+          
+          this.criticalAlertsCount.set(dangerCount);
+        }
+      },
+      error: (err) => console.error('Erreur chargement alertes:', err)
+    });
+
+    // 2. Récupérer les rendez-vous en attente et filtrer les URGENTS
+    this.psychologistService.getPendingRequests().subscribe({
+      next: (res: any) => {
+        const data = res.data ? res.data : res;
+        if (data && Array.isArray(data)) {
+          const urgentCount = data.filter((app: any) => app.type === 'URGENT').length;
+          this.urgentAppointmentsCount.set(urgentCount);
+        }
+      },
+      error: (err) => console.error('Erreur chargement rdv:', err)
+    });
+  }
 
   logout() { this.auth.logout(); }
 
@@ -57,4 +107,3 @@ export class PsychologistShellComponent {
     return icons[name] ?? '';
   }
 }
-

@@ -260,4 +260,6 @@ downloadDocument(id: number): Observable<Blob> {
     responseType: 'blob' // 👈 Très important pour les fichiers !
   });
 }
+// Dans src/app/core/services/psychologist.ts (ou nom similaire)
+
 }

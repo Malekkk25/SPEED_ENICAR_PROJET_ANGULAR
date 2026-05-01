@@ -60,19 +60,20 @@ export class AppointmentListComponent implements OnInit {
     this.loadPending();
     this.loadToday();
   }
-// Dans appointment-list.ts (n'oublie pas d'injecter ConsultationService)
-joinConsultation(a: Appointment) {
-  this.consultationSvc.createSession(a.id).subscribe({
-    next: (session) => {
-      // Le backend a créé la salle et envoyé les emails !
-      this.router.navigate(['/psychologist/consultation/room', session.roomId]);
-    },
-    error: (err) => {
-      console.error("Erreur backend :", err);
-      alert("Erreur lors de la création de la session. Vérifiez le backend.");
-    }
-  });
-}
+
+  joinConsultation(a: Appointment) {
+    this.consultationSvc.createSession(a.id).subscribe({
+      next: (session) => {
+        // Le backend a créé la salle et envoyé les emails !
+        this.router.navigate(['/psychologist/consultation/room', session.roomId]);
+      },
+      error: (err) => {
+        console.error("Erreur backend :", err);
+        alert("Erreur lors de la création de la session. Vérifiez le backend.");
+      }
+    });
+  }
+
   load() { this.loadAll(); }
 
   loadAll(page = 0) {
@@ -126,7 +127,7 @@ joinConsultation(a: Appointment) {
   }
 
   cancel(a: Appointment) {
-    this.svc.cancelAppointment(a.id, 'Annule par le psychologue').subscribe({
+    this.svc.cancelAppointment(a.id, 'Annulé par le psychologue').subscribe({
       next: () => { this.loadAll(this.currentPage); this.loadPending(); }
     });
   }
@@ -148,6 +149,16 @@ joinConsultation(a: Appointment) {
   }
 
   statusLabel(s: string): string {
-    return ({ PENDING: 'En attente', CONFIRMED: 'Confirme', COMPLETED: 'Termine', CANCELLED: 'Annule' } as Record<string, string>)[s] ?? s;
+    return ({ PENDING: 'En attente', CONFIRMED: 'Confirmé', COMPLETED: 'Terminé', CANCELLED: 'Annulé' } as Record<string, string>)[s] ?? s;
+  }
+
+  // 👇 Gère l'affichage du lieu (Présentiel ou Ligne)
+  locationLabel(l: string | undefined): string {
+    if (!l) return 'Non défini';
+    const labels: Record<string, string> = {
+      'ONLINE': '💻 En ligne',
+      'PRESENTIAL': '📍 Présentiel'
+    };
+    return labels[l] ?? l;
   }
 }
