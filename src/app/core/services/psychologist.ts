@@ -3,8 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../enviroments/environment';
 
-
-// ── Types alignés avec le backend Spring Boot ───────
+// ── Interfaces alignées avec le backend Spring Boot ───────
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -20,6 +19,19 @@ export interface Page<T> {
   totalPages: number;
   size: number;
   number: number;
+}
+
+export interface MedicalDocument {
+  id: number;
+  studentId: number;
+  studentName: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  status: 'PENDING' | 'VALIDATED' | 'REJECTED';
+  rejectionReason?: string;
+  createdAt: string;
+  validationDate?: string;
 }
 
 export interface PsychologistDashboard {
@@ -137,115 +149,115 @@ export class PsychologistService {
 
   // ── Dashboard ─────────────────────────────────────
   getDashboard(): Observable<ApiResponse<PsychologistDashboard>> {
-    return this.http.get<ApiResponse<PsychologistDashboard>>(
-      `${this.api}/dashboard`
-    );
+    return this.http.get<ApiResponse<PsychologistDashboard>>(`${this.api}/dashboard`);
   }
 
   // ── Schedule ──────────────────────────────────────
   getSchedule(): Observable<ApiResponse<TimeSlot[]>> {
-    return this.http.get<ApiResponse<TimeSlot[]>>(
-      `${this.api}/schedule`
-    );
+    return this.http.get<ApiResponse<TimeSlot[]>>(`${this.api}/schedule`);
   }
 
   updateSchedule(req: ScheduleUpdateRequest): Observable<ApiResponse<TimeSlot[]>> {
-    return this.http.put<ApiResponse<TimeSlot[]>>(
-      `${this.api}/schedule`, req
-    );
+    return this.http.put<ApiResponse<TimeSlot[]>>(`${this.api}/schedule`, req);
   }
 
   getAvailableSlots(psychologistId: number, day: string): Observable<ApiResponse<TimeSlot[]>> {
     const params = new HttpParams()
       .set('psychologistId', psychologistId)
       .set('day', day);
-    return this.http.get<ApiResponse<TimeSlot[]>>(
-      `${this.api}/schedule/available`, { params }
-    );
+    return this.http.get<ApiResponse<TimeSlot[]>>(`${this.api}/schedule/available`, { params });
   }
 
   // ── Appointments ──────────────────────────────────
   getAppointments(page = 0, size = 20): Observable<ApiResponse<Page<Appointment>>> {
-    return this.http.get<ApiResponse<Page<Appointment>>>(
-      `${this.api}/appointments?page=${page}&size=${size}`
-    );
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<ApiResponse<Page<Appointment>>>(`${this.api}/appointments`, { params });
   }
 
   getTodayAppointments(): Observable<ApiResponse<Appointment[]>> {
-    return this.http.get<ApiResponse<Appointment[]>>(
-      `${this.api}/appointments/today`
-    );
+    return this.http.get<ApiResponse<Appointment[]>>(`${this.api}/appointments/today`);
   }
 
   getPendingRequests(): Observable<ApiResponse<Appointment[]>> {
-    return this.http.get<ApiResponse<Appointment[]>>(
-      `${this.api}/appointments/pending`
-    );
+    return this.http.get<ApiResponse<Appointment[]>>(`${this.api}/appointments/pending`);
   }
 
   confirmAppointment(id: number): Observable<ApiResponse<Appointment>> {
-    return this.http.put<ApiResponse<Appointment>>(
-      `${this.api}/appointments/${id}/confirm`, {}
-    );
+    return this.http.put<ApiResponse<Appointment>>(`${this.api}/appointments/${id}/confirm`, {});
   }
 
   cancelAppointment(id: number, reason?: string): Observable<ApiResponse<Appointment>> {
     let params = new HttpParams();
     if (reason) params = params.set('reason', reason);
-    return this.http.put<ApiResponse<Appointment>>(
-      `${this.api}/appointments/${id}/cancel`, {}, { params }
-    );
+    return this.http.put<ApiResponse<Appointment>>(`${this.api}/appointments/${id}/cancel`, {}, { params });
   }
 
   completeAppointment(id: number, notes?: string): Observable<ApiResponse<Appointment>> {
     let params = new HttpParams();
     if (notes) params = params.set('notes', notes);
-    return this.http.put<ApiResponse<Appointment>>(
-      `${this.api}/appointments/${id}/complete`, {}, { params }
-    );
+    return this.http.put<ApiResponse<Appointment>>(`${this.api}/appointments/${id}/complete`, {}, { params });
   }
 
   // ── Records ───────────────────────────────────────
   getAllRecords(page = 0, size = 15): Observable<ApiResponse<Page<ConfidentialRecord>>> {
-    return this.http.get<ApiResponse<Page<ConfidentialRecord>>>(
-      `${this.api}/records?page=${page}&size=${size}`
-    );
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<ApiResponse<Page<ConfidentialRecord>>>(`${this.api}/records`, { params });
   }
 
   getStudentRecords(studentId: number, page = 0, size = 10): Observable<ApiResponse<Page<ConfidentialRecord>>> {
-    return this.http.get<ApiResponse<Page<ConfidentialRecord>>>(
-      `${this.api}/records/student/${studentId}?page=${page}&size=${size}`
-    );
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<ApiResponse<Page<ConfidentialRecord>>>(`${this.api}/records/student/${studentId}`, { params });
   }
 
   createRecord(req: CreateRecordRequest): Observable<ApiResponse<ConfidentialRecord>> {
-    return this.http.post<ApiResponse<ConfidentialRecord>>(
-      `${this.api}/records`, req
-    );
+    return this.http.post<ApiResponse<ConfidentialRecord>>(`${this.api}/records`, req);
   }
 
   updateRecord(id: number, req: UpdateRecordRequest): Observable<ApiResponse<ConfidentialRecord>> {
-    return this.http.put<ApiResponse<ConfidentialRecord>>(
-      `${this.api}/records/${id}`, req
-    );
+    return this.http.put<ApiResponse<ConfidentialRecord>>(`${this.api}/records/${id}`, req);
   }
 
   getPendingFollowUps(): Observable<ApiResponse<ConfidentialRecord[]>> {
-    return this.http.get<ApiResponse<ConfidentialRecord[]>>(
-      `${this.api}/records/follow-ups`
-    );
+    return this.http.get<ApiResponse<ConfidentialRecord[]>>(`${this.api}/records/follow-ups`);
   }
 
   deleteRecord(id: number): Observable<ApiResponse<void>> {
-  return this.http.delete<ApiResponse<void>>(
-    `${this.api}/records/${id}`
-  );
-}
+    return this.http.delete<ApiResponse<void>>(`${this.api}/records/${id}`);
+  }
 
   // ── Alerts ────────────────────────────────────────
   getStudentsAtRisk(): Observable<ApiResponse<StudentAlert[]>> {
-    return this.http.get<ApiResponse<StudentAlert[]>>(
-      `${this.api}/alerts`
-    );
+    return this.http.get<ApiResponse<StudentAlert[]>>(`${this.api}/alerts`);
   }
+
+  // ── Documents Médicaux ─────────────────────────────
+  getPendingDocuments(): Observable<ApiResponse<MedicalDocument[]>> {
+    return this.http.get<ApiResponse<MedicalDocument[]>>(`${this.api}/documents/pending`);
+  }
+
+  validateDocument(id: number): Observable<ApiResponse<MedicalDocument>> {
+    return this.http.put<ApiResponse<MedicalDocument>>(`${this.api}/documents/${id}/validate`, {});
+  }
+
+  rejectDocument(id: number, reason: string): Observable<ApiResponse<MedicalDocument>> {
+    return this.http.put<ApiResponse<MedicalDocument>>(`${this.api}/documents/${id}/reject`, { reason });
+  }
+  // Récupère les documents d'un étudiant spécifique
+
+// Récupère TOUS les documents (Validés, Refusés, En attente) pour un étudiant précis
+getStudentMedicalDocuments(studentId: number): Observable<ApiResponse<MedicalDocument[]>> {
+  return this.http.get<ApiResponse<MedicalDocument[]>>(`${this.api}/documents/student/${studentId}`);
+}
+// Récupère le fichier physique (image ou PDF)
+downloadDocument(id: number): Observable<Blob> {
+  return this.http.get(`${this.api}/documents/${id}/download`, { 
+    responseType: 'blob' // 👈 Très important pour les fichiers !
+  });
+}
 }

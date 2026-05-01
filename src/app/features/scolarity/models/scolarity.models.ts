@@ -7,25 +7,13 @@ export interface StudentDossier {
   department: string;
   level: string;
   enrollmentYear: number;
-  pendingDocuments: MedicalDocument[];
   prolongedAbsences: Absence[];
   grades: AcademicRecord[];
   unjustifiedAbsencesCount: number;
   averageGrade: number;
 }
 
-export interface MedicalDocument {
-  id: number;
-  studentId: number;
-  studentName: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-  status: 'PENDING' | 'VALIDATED' | 'REJECTED';
-  rejectionReason: string;
-  createdAt: string;
-  validationDate: string;
-}
+
 
 export interface Absence {
   id: number;

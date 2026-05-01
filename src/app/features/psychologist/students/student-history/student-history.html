@@ -5,11 +5,11 @@
     <span>{{ studentName() || 'Etudiant #' + studentId }}</span>
   </div>
 
-  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">Chargement...</div>
+  <div *ngIf="loading()" style="text-align:center;padding:3rem;color:#888">
+    Chargement...
+  </div>
 
   <ng-container *ngIf="!loading()">
-
-    <!-- Profile header -->
     <div class="profile-header">
       <div class="big-ava">{{ initial() }}</div>
       <div class="profile-info">
@@ -35,20 +35,25 @@
         <a class="session-item" *ngFor="let r of records()" [routerLink]="['/psychologist/records', r.id]">
           <div class="session-date">{{ r.sessionDate | date:'dd/MM/yy' }}</div>
           <div class="session-info">
-            <p class="session-complaint">{{ r.observations | slice:0:100 }}{{ r.observations.length > 100 ? '...' : '' }}</p>
+            <p class="session-complaint">
+  {{ r.observations | slice:0:100 }}{{ (r.observations ?? '').length > 100 ? '...' : '' }}
+</p>
+           
             <div class="session-meta">
               <span>{{ r.sessionDurationMinutes }} min</span>
               <span *ngIf="r.followUpRequired" class="follow-tag">Suivi requis</span>
               <span *ngIf="r.studentProgress">{{ r.studentProgress }}</span>
             </div>
           </div>
-          <span class="risk-badge" [class]="'risk-' + r.riskLevel.toLowerCase()">{{ riskLabel(r.riskLevel) }}</span>
+          <span class="risk-badge" [class]="'risk-' + (r.riskLevel || '').toLowerCase()">
+            {{ riskLabel(r.riskLevel) }}
+          </span>
         </a>
       </div>
 
       <div class="empty-state" *ngIf="records().length === 0">
-        <p>Aucune fiche de suivi pour cet etudiant</p>
-        <button class="btn-ghost" (click)="newRecord()">Creer la premiere fiche</button>
+        <p>Aucune fiche de suivi pour cet étudiant</p>
+        <button class="btn-ghost" (click)="newRecord()">Créer la première fiche</button>
       </div>
     </section>
 
@@ -69,10 +74,82 @@
               <span>{{ typeLabel(a.type) }}</span>
             </div>
           </div>
-          <span class="status-badge" [class]="'st-' + a.status.toLowerCase()">{{ statusLabel(a.status) }}</span>
+          <span class="status-badge" [class]="'st-' + (a.status || '').toLowerCase()">
+            {{ statusLabel(a.status) }}
+          </span>
         </a>
       </div>
     </section>
 
+    <!-- Documents section -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Documents médicaux</h2>
+        <span class="count-badge">{{ documents().length }}</span>
+      </div>
+
+      <div class="sessions-list" *ngIf="documents().length > 0">
+        <div class="session-item clickable-doc" *ngFor="let doc of documents()" (click)="openDocument(doc)">
+          <div class="session-date">{{ doc.createdAt | date:'dd/MM/yy' }}</div>
+          <div class="session-info">
+            <p class="session-complaint" style="font-weight: 600; color: #1e293b;">
+              {{ doc.fileName }}
+            </p>
+            <div class="session-meta">
+              <span>{{ doc.fileType || 'Document' }}</span>
+              <span *ngIf="doc.status === 'REJECTED' && doc.rejectionReason" class="text-danger">
+                {{ doc.rejectionReason }}
+              </span>
+              <span *ngIf="doc.fileSize">({{ (doc.fileSize / 1024).toFixed(1) }} KB)</span>
+            </div>
+          </div>
+          <span class="status-badge" [ngClass]="{
+            'st-completed': doc.status === 'VALIDATED', 
+            'st-cancelled': doc.status === 'REJECTED',
+            'st-pending': doc.status === 'PENDING'
+          }">
+            {{ docStatusLabel(doc.status) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="documents().length === 0">
+        <p>Aucun document pour cet étudiant</p>
+      </div>
+    </section>
+
+    <!-- Document Preview Modal -->
+    <div class="preview-overlay" *ngIf="selectedDoc()" (click)="closeDocument()">
+      <div class="preview-modal" (click)="$event.stopPropagation()">
+        <div class="preview-header">
+          <h3>{{ selectedDoc()?.fileName }}</h3>
+          <button class="btn-close" (click)="closeDocument()">×</button>
+        </div>
+        
+        <div class="preview-body">
+          <div *ngIf="isLoadingDoc()" class="loader">Chargement du fichier...</div>
+          <div *ngIf="errorMessage()" class="error">{{ errorMessage() }}</div>
+
+          <ng-container *ngIf="!isLoadingDoc() && !errorMessage() && filePreviewUrl()">
+            <iframe 
+              *ngIf="previewType() === 'pdf'" 
+              [src]="filePreviewUrl()!" 
+              width="100%" 
+              height="500px"
+              frameborder="0">
+            </iframe>
+            <img 
+              *ngIf="previewType() === 'image'" 
+              [src]="filePreviewUrl()!" 
+              class="img-fluid" 
+              alt="Preview" />
+            <div *ngIf="previewType() === 'other'" class="p-4 text-center">
+              <p>Ce type de fichier ne peut pas être prévisualisé.</p>
+              <small>{{ selectedDoc()?.fileName }}</small>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </div>

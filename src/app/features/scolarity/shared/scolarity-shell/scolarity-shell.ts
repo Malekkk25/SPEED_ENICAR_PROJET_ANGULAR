@@ -28,7 +28,7 @@ export class ScolarityShellComponent {
   navItems = [
     { path: '/scolarity/dashboard', label: 'Tableau de bord', icon: this.icon('dashboard') },
     { path: '/scolarity/students',  label: 'Dossiers étudiants', icon: this.icon('users') },
-    { path: '/scolarity/documents', label: 'Documents médicaux', icon: this.icon('file') },
+
     { path: '/scolarity/absences',  label: 'Absences prolongées', icon: this.icon('clock') },
     { path: '/scolarity/analysis',  label: 'Analyse IA', icon: this.icon('brain') },
   ];

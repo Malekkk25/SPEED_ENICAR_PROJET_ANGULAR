@@ -3,7 +3,14 @@
   import { Observable } from 'rxjs';
   import { environment } from '../../../enviroments/environment';
   import { ApiResponse } from './auth';
-
+export interface DifficultyReport {
+  id: number;
+  type: string;
+  description: string;
+  urgency: string;
+  status: string;
+  createdAt: string;
+}
   export interface MedicalDocumentResponse { // 👈 On utilise ce nom pour être cohérent avec le backend
   id: number;
   fileName: string;
@@ -253,17 +260,32 @@
     requestAppointment(data: AppointmentRequest): Observable<ApiResponse<Appointment>> {
       return this.http.post<ApiResponse<Appointment>>(`${this.apiUrl}/appointments/reserve`, data);
     }
-  // Importe ton interface MedicalDocumentResponse
-  getDocuments(): Observable<ApiResponse<MedicalDocumentResponse[]>> {
-    return this.http.get<ApiResponse<MedicalDocumentResponse[]>>(`${this.apiUrl}/documents`);
-  }
-    uploadDocument(file: File, description: string): Observable<ApiResponse<MedicalDocument>> {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'MEDICAL_CERTIFICATE'); // Ou dynamique si tu as un select
-      formData.append('description', description);
 
-      return this.http.post<ApiResponse<MedicalDocument>>(`${this.apiUrl}/documents`, formData);
-    }
     
+
+  submitReport(data: { type: string, description: string, urgency: string }): Observable<ApiResponse<DifficultyReport>> {
+    return this.http.post<ApiResponse<DifficultyReport>>(`${this.apiUrl}/reports`, data);
   }
+    // N'utilise pas tes méthodes génériques qui ajoutent des headers JSON
+// Dans core/services/student.ts
+
+getDocuments(): Observable<ApiResponse<MedicalDocumentResponse[]>> {
+    // Note: Si ton API student doit filtrer par défaut, 
+    // assure-toi que le backend gère le filtrage par l'utilisateur connecté
+    return this.http.get<ApiResponse<MedicalDocumentResponse[]>>(`${this.apiUrl}/document//my-documents`);
+  }
+
+  uploadDocument(file: File, type: string): Observable<ApiResponse<MedicalDocumentResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    return this.http.post<ApiResponse<MedicalDocumentResponse>>(`${this.apiUrl}/document/upload`, formData);
+  }
+
+  downloadDocument(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/document/download/${id}`, { responseType: 'blob' });
+  }
+
+  }
+
+export { ApiResponse };

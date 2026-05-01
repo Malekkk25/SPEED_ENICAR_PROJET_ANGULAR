@@ -1,15 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DifficultyReport } from '../../../core/services/student';
 
-export interface DifficultyReport {
-  id: number;
-  type: string;
-  description: string;
-  urgency: string;
-  status: string;
-  createdAt: string;
-}
+
 
 @Component({
   selector: 'app-difficulties',

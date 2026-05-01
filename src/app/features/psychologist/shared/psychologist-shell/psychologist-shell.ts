@@ -38,6 +38,7 @@ export class PsychologistShellComponent {
     { path: '/psychologist/appointments', label: 'Rendez-vous', icon: this.icon('calendar'), badge: 3 },
     { path: '/psychologist/students', label: 'Étudiants suivis', icon: this.icon('users') },
     { path: '/psychologist/records', label: 'Fiches confidentielles', icon: this.icon('lock') },
+    { path: '/psychologist/documents', label: 'Documents médicaux', icon: this.icon('file') },
     { path: '/psychologist/alerts', label: 'Alertes', icon: this.icon('bell'), badge: 2 },
     { path: '/psychologist/schedule', label: 'Mon planning', icon: this.icon('clock') },
   ];

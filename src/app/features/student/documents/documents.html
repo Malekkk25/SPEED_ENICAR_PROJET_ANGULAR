@@ -15,7 +15,6 @@
     </button>
   </div>
 
-  <!-- Formulaire -->
   <div *ngIf="showForm()" class="card form-card">
     <div class="form-section-title">NOUVEAU DOCUMENT</div>
     <div class="upload-zone">
@@ -45,7 +44,6 @@
     </div>
   </div>
 
-  <!-- Filtres -->
   <div class="filter-tabs">
     <button class="tab" [class.active]="activeFilter() === 'ALL'" (click)="setFilter('ALL')">Tous</button>
     <button class="tab" [class.active]="activeFilter() === 'PENDING'" (click)="setFilter('PENDING')">En attente</button>
@@ -53,7 +51,6 @@
     <button class="tab" [class.active]="activeFilter() === 'REJECTED'" (click)="setFilter('REJECTED')">Rejetés</button>
   </div>
 
-  <!-- Liste -->
   <div class="card">
     <div *ngIf="loading()" class="loading">Chargement...</div>
     <div *ngIf="!loading() && filteredDocuments().length === 0" class="empty-state">
@@ -74,7 +71,7 @@
       <thead>
         <tr>
           <th>Fichier</th>
-          <th>Taille</th>
+          <th>Type de fichier</th>
           <th>Date de dépôt</th>
           <th>Statut</th>
           <th>Remarque</th>

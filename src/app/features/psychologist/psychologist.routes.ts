@@ -50,6 +50,12 @@ export const psychologistRoutes: Routes = [
         path: 'schedule',
         loadComponent: () => import('./schedule/schedule').then(m => m.ScheduleComponent),
       },
+            {
+        path: 'documents',
+        loadComponent: () =>
+          import('../scolarity/documents/documents')
+            .then(m => m.DocumentsComponent),
+      },
         {
     path: 'consultation/room/:roomId',
     loadComponent: () =>

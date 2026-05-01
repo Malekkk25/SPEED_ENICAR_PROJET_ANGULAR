@@ -38,10 +38,8 @@ export class StudentShellComponent {
     { path: '/student/dashboard', label: 'Tableau de bord', icon: this.icon('dashboard') },
     { path: '/student/mood-tracker', label: 'Mood Tracker', icon: this.icon('smile') },
     { path: '/student/appointments', label: 'Rendez-vous', icon: this.icon('calendar') },
-    { path: '/student/academic', label: 'Suivi académique', icon: this.icon('graduation') },
-    { path: '/student/absences', label: 'Mes absences', icon: this.icon('clock') },
     { path: '/student/documents', label: 'Documents médicaux', icon: this.icon('file') },
-    { path: '/student/difficulties', label: 'Signalement', icon: this.icon('alert') },
+  
   ];
 
   logout() { this.auth.logout(); }

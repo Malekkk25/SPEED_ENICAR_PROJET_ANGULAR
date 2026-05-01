@@ -19,12 +19,7 @@ export const scolarityRoutes: Routes = [
           import('./students/students')
             .then(m => m.StudentsComponent),
       },
-      {
-        path: 'documents',
-        loadComponent: () =>
-          import('./documents/documents')
-            .then(m => m.DocumentsComponent),
-      },
+
       {
         path: 'absences',
         loadComponent: () =>

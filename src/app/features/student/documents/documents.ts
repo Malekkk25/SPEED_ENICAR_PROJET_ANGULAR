@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MedicalDocumentResponse, StudentService } from '../../../core/services/student';
+import { MedicalDocumentResponse } from '../../../core/services/student'; // Ajuste si l'interface a bougé
 
-
-
+// 👇 On importe le NOUVEAU service unifié
+import { DocumentService } from '../../../core/services//Document.service';
 
 @Component({
   selector: 'app-documents',
@@ -14,51 +14,53 @@ import { MedicalDocumentResponse, StudentService } from '../../../core/services/
   styleUrl: './documents.css'
 })
 export class DocumentsComponent implements OnInit {
-  private svc = inject(StudentService);
+  
+  // 👇 Injection du DocumentService à la place de StudentService
+  private documentService = inject(DocumentService);
 
-
-  uploading = signal(false);
-  showForm = signal(false);
+  // --- Signaux d'état ---
+  documents = signal<MedicalDocumentResponse[]>([]);
+  loading = signal<boolean>(false);
+  uploading = signal<boolean>(false);
+  showForm = signal<boolean>(false);
   activeFilter = signal<string>('ALL');
 
-  // Formulaire
+  // --- Formulaire ---
   selectedFile: File | null = null;
   description = '';
 
-ngOnInit() {
-  this.loadDocuments(); // 👈 Indispensable pour remplir le signal au chargement !
-}
+  ngOnInit() {
+    this.loadDocuments();
+  }
 
-// Dans ta classe de composant
-documents = signal<MedicalDocumentResponse[]>([]); // Initialise avec un tableau vide
-loading = signal<boolean>(false);
-
-loadDocuments() {
-  this.loading.set(true);
-  this.svc.getDocuments().subscribe({
-    next: (res) => {
-      // res.data contient maintenant bien la liste 
-      this.documents.set(res.data); 
-      this.loading.set(false);
-    },
-    error: (err) => {
-      console.error('Erreur chargement documents', err);
-      this.loading.set(false);
-    }
-  });
-}
+  loadDocuments() {
+    this.loading.set(true);
+    // 👇 Appel de la nouvelle méthode getMyDocuments()
+    this.documentService.getMyDocuments().subscribe({
+      next: (res: any) => {
+        // ⚠️ Si ton backend renvoie une List directe, utilise "res".
+        // S'il renvoie un objet avec "data", utilise "res.data".
+        this.documents.set(res.data || res); 
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Erreur chargement documents', err);
+        this.loading.set(false);
+      }
+    });
+  }
 
   uploadDocument() {
     if (!this.selectedFile) return;
     this.uploading.set(true);
 
-    this.svc.uploadDocument(this.selectedFile, this.description).subscribe({
+    this.documentService.uploadDocument(this.selectedFile, this.description).subscribe({
       next: (res) => {
         this.uploading.set(false);
         this.showForm.set(false);
         this.selectedFile = null;
         this.description = '';
-        this.loadDocuments(); // Recharge la vraie liste depuis le backend
+        this.loadDocuments(); // On recharge la liste après un upload réussi
       },
       error: (err) => {
         console.error('Erreur upload', err);
@@ -83,9 +85,6 @@ loadDocuments() {
     this.activeFilter.set(filter);
   }
 
-
-
-
   getStatusClass(status: string): string {
     const classes: Record<string, string> = {
       'PENDING': 'status-pending',
@@ -104,10 +103,37 @@ loadDocuments() {
     return labels[status] ?? status;
   }
 
-  formatFileSize(bytes: number): string {
-    if (!bytes) return '—';
+  formatFileSize(bytes: number | undefined): string {
+    if (!bytes) return '—'; 
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  downloadDocument(id: number, fileName: string) {
+    this.loading.set(true);
+    
+    // 👇 Appel de la méthode unifiée de téléchargement
+    this.documentService.downloadDocument(id).subscribe({
+      next: (blob) => {
+        this.loading.set(false);
+        
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName; // Le nom avec lequel le fichier sera téléchargé
+        document.body.appendChild(a);
+        a.click();
+        
+        // Nettoyage de la mémoire
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        console.error('Erreur téléchargement', err);
+        alert('Impossible de télécharger le fichier. Vérifiez s\'il existe toujours sur le serveur.');
+      }
+    });
   }
 }

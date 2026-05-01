@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScolarityService } from '../services/scolarity.service';
-import { MedicalDocument } from '../models/scolarity.models';
+
+import { MedicalDocument, PsychologistService } from '../../../core/services/psychologist';
 
 @Component({
   selector: 'app-documents',
@@ -11,7 +11,8 @@ import { MedicalDocument } from '../models/scolarity.models';
   styleUrl: './documents.css'
 })
 export class DocumentsComponent implements OnInit {
-  private service = inject(ScolarityService);
+  
+  private service = inject(PsychologistService);
 
   documents = signal<MedicalDocument[]>([]);
   loading = signal(true);
@@ -26,15 +27,27 @@ export class DocumentsComponent implements OnInit {
   loadDocuments() {
     this.loading.set(true);
     this.service.getPendingDocuments().subscribe({
-      next: (docs) => { this.documents.set(docs); this.loading.set(false); },
-      error: () => this.loading.set(false)
+      // ✅ CORRECTION : On utilise response.data pour récupérer le tableau
+      next: (response: any) => { 
+        // Par sécurité, on vérifie si .data existe, sinon on prend la réponse directe
+        const docs = response.data !== undefined ? response.data : response;
+        this.documents.set(docs); 
+        this.loading.set(false); 
+      },
+      error: (err) => {
+        console.error('Erreur chargement documents:', err);
+        this.loading.set(false);
+      }
     });
   }
 
   validate(id: number) {
     this.processingId.set(id);
     this.service.validateDocument(id).subscribe({
-      next: () => { this.loadDocuments(); this.processingId.set(null); },
+      next: () => { 
+        this.loadDocuments(); 
+        this.processingId.set(null); 
+      },
       error: () => this.processingId.set(null)
     });
   }
@@ -51,8 +64,12 @@ export class DocumentsComponent implements OnInit {
 
   confirmReject(id: number) {
     if (!this.rejectReason().trim()) return;
+    
     this.service.rejectDocument(id, this.rejectReason()).subscribe({
-      next: () => { this.loadDocuments(); this.cancelReject(); },
+      next: () => { 
+        this.loadDocuments(); 
+        this.cancelReject(); 
+      },
       error: () => this.cancelReject()
     });
   }

@@ -35,10 +35,7 @@ export class ScolarityDashboardComponent implements OnInit {
       error: () => this.totalStudents.set(0)
     });
 
-    this.scolarityService.getPendingDocuments().subscribe({
-      next: (docs) => this.pendingDocuments.set(docs.length),
-      error: () => this.pendingDocuments.set(0)
-    });
+
 
     this.scolarityService.getProlongedAbsences().subscribe({
       next: (abs) => this.prolongedAbsences.set(abs.length),

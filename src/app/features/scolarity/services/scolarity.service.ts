@@ -3,7 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../enviroments/environment';
 import { AuthService } from '../../../core/services/auth';
-import { StudentDossier, MedicalDocument, Absence, AnalysisResult, PageResponse } from '../models/scolarity.models';
+import { Absence, AnalysisResult, PageResponse, StudentDossier } from '../models/scolarity.models';
+
 
 @Injectable({ providedIn: 'root' })
 export class ScolarityService {
@@ -32,28 +33,7 @@ export class ScolarityService {
     );
   }
 
-  getPendingDocuments(): Observable<MedicalDocument[]> {
-    return this.http.get<MedicalDocument[]>(
-      this.apiUrl + '/documents/pending',
-      { headers: this.headers() }
-    );
-  }
-
-  validateDocument(id: number): Observable<MedicalDocument> {
-    return this.http.put<MedicalDocument>(
-      this.apiUrl + '/documents/' + id + '/validate',
-      {},
-      { headers: this.headers() }
-    );
-  }
-
-  rejectDocument(id: number, reason: string): Observable<MedicalDocument> {
-    return this.http.put<MedicalDocument>(
-      this.apiUrl + '/documents/' + id + '/reject',
-      { reason },
-      { headers: this.headers() }
-    );
-  }
+  
 
   // ── ABSENCES ──────────────────────────────────────
 
