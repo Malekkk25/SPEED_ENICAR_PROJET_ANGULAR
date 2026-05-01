@@ -47,12 +47,14 @@ export class WebRtcSignalingService implements OnDestroy {
   private roomId!: string;
 
   // ─── Événements de signaling émis vers le composant ─────────────────────────
-  readonly onOffer$    = new Subject<RTCSessionDescriptionInit>();
-  readonly onAnswer$   = new Subject<RTCSessionDescriptionInit>();
-  readonly onIce$      = new Subject<RTCIceCandidateInit>();
-  readonly onPeerJoin$ = new Subject<PeerPresentPayload>();
-  readonly onPeerLeave$ = new Subject<void>();
-  readonly connected$  = new BehaviorSubject<boolean>(false);
+// ─── Événements de signaling émis vers le composant
+readonly onOffer$      = new Subject<RTCSessionDescriptionInit>();
+readonly onAnswer$     = new Subject<RTCSessionDescriptionInit>();
+readonly onIce$        = new Subject<RTCIceCandidateInit>();
+readonly onPeerJoin$   = new Subject<PeerPresentPayload>(); // ← je dois créer l'offre
+readonly onPeerArrived$ = new Subject<PeerPresentPayload>(); // ← quelqu'un arrive, j'attends son offre
+readonly onPeerLeave$  = new Subject<void>();
+readonly connected$    = new BehaviorSubject<boolean>(false);
 
   // ─── WebRTC ─────────────────────────────────────────────────────────────────
   private peerConnection!: RTCPeerConnection;
@@ -110,51 +112,73 @@ export class WebRtcSignalingService implements OnDestroy {
   }
 
   /** Canal privé : pour recevoir "peer-present" uniquement destiné à moi */
-  private subscribeToPrivateChannel(roomId: string): void {
-    const myId = this.authService.getCurrentUser()?.email;
-    if (!myId) return;
-    this.stompClient.subscribe(`/topic/room/${roomId}/user/${myId}`, (msg: IMessage) => {
-      const signal: SignalMessage = JSON.parse(msg.body);
-      this.handleIncomingSignal(signal);
-    });
-  }
+ private subscribeToPrivateChannel(roomId: string): void {
+  const myId = this.authService.getCurrentUser()?.email;
+  if (!myId) return;
 
+  // ✅ Doit correspondre exactement à ce que le serveur utilise
+  const privateChannel = `/topic/room/${roomId}/user/${myId}`;
+   console.log('Abonné au canal privé:', privateChannel); // à mettre dans le .ts
+
+  this.stompClient.subscribe(privateChannel, (msg: IMessage) => {
+    const signal: SignalMessage = JSON.parse(msg.body);
+    console.log('Message canal privé reçu:', signal); // ✅ debug
+    this.handleIncomingSignal(signal);
+  });
+}
   // ─── Gestion des signaux entrants ────────────────────────────────────────────
 
-  private handleIncomingSignal(signal: SignalMessage): void {
-    switch (signal.type) {
-      case 'peer-present':
-        // Un pair est déjà présent → je dois initier l'offer
-        this.onPeerJoin$.next(signal.payload as PeerPresentPayload);
-        break;
-      case 'join':
-        // Un nouveau participant rejoint → il va initier l'offer lui-même
-        this.onPeerJoin$.next({ peerId: signal.senderId, peerName: String(signal.payload) });
-        break;
-      case 'offer':
-        this.onOffer$.next(signal.payload as RTCSessionDescriptionInit);
-        break;
-      case 'answer':
-        this.onAnswer$.next(signal.payload as RTCSessionDescriptionInit);
-        break;
-      case 'ice-candidate':
-        this.onIce$.next(signal.payload as RTCIceCandidateInit);
-        break;
-      case 'leave':
-        this.onPeerLeave$.next();
-        break;
-    }
+private handleIncomingSignal(signal: SignalMessage): void {
+  switch (signal.type) {
+
+    case 'peer-present':
+      // Je suis le 2ème → je crée l'offre
+      this.onPeerJoin$.next(signal.payload as PeerPresentPayload);
+      break;
+
+    case 'join':
+      // Quelqu'un arrive après moi → il va créer l'offre, j'attends
+      // Je NE crée PAS l'offre ici
+      this.onPeerArrived$.next({
+        peerId: signal.senderId,
+        peerName: String(signal.payload)
+      });
+      break;
+
+    case 'offer':
+      this.onOffer$.next(signal.payload as RTCSessionDescriptionInit);
+      break;
+
+    case 'answer':
+      this.onAnswer$.next(signal.payload as RTCSessionDescriptionInit);
+      break;
+
+    case 'ice-candidate':
+      this.onIce$.next(signal.payload as RTCIceCandidateInit);
+      break;
+
+    case 'leave':
+      this.onPeerLeave$.next();
+      break;
   }
+}
 
   // ─── Envoi de signaux ────────────────────────────────────────────────────────
 
-  sendSignal(message: Partial<SignalMessage>): void {
-    if (!this.stompClient?.connected) return;
-    this.stompClient.publish({
-      destination: `/app/signal/${this.roomId}`,
-      body: JSON.stringify({ ...message, roomId: this.roomId }),
-    });
-  }
+sendSignal(message: Partial<SignalMessage>): void {
+  if (!this.stompClient?.connected) return;
+
+  const senderId = this.authService.getCurrentUser()?.email ?? '';
+
+  this.stompClient.publish({
+    destination: `/app/signal/${this.roomId}`,
+    body: JSON.stringify({
+      ...message,
+      roomId: this.roomId,
+      senderId: senderId  // ✅ toujours inclus
+    }),
+  });
+}
 
   sendOffer(offer: RTCSessionDescriptionInit): void {
     this.sendSignal({ type: 'offer', payload: offer });
