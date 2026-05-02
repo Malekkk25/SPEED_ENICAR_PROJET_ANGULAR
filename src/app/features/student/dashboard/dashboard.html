@@ -133,5 +133,42 @@
 
     </div>
   </div>
+  <!-- Risk Score Widget -->
+<div *ngIf="!loading() && riskScore()" class="risk-card"
+  [style.border-left-color]="riskScore().color">
+  <div class="risk-header">
+    <div class="risk-title">
+      <span class="risk-emoji">{{ riskScore().emoji }}</span>
+      <div>
+        <p class="risk-level" [style.color]="riskScore().color">
+          Risque {{ riskScore().level }}
+        </p>
+        <p class="risk-score-text">Score : {{ riskScore().score }} / 100</p>
+      </div>
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar">
+        <div class="risk-fill"
+          [style.width]="riskScore().score + '%'"
+          [style.background]="riskScore().color">
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="risk-recommendation">{{ riskScore().recommendation }}</p>
+  <div class="risk-factors" *ngIf="riskScore().factors?.length > 0">
+    <p class="risk-factors-title">Facteurs détectés :</p>
+    <div class="risk-factor" *ngFor="let factor of riskScore().factors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        style="width:14px;height:14px;min-width:14px"
+        [style.color]="riskScore().color">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ factor }}</span>
+    </div>
+  </div>
+</div>
 
 </div>

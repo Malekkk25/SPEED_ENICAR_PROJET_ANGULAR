@@ -181,4 +181,8 @@ export class StudentService {
   getAbsencesCount(): Observable<ApiResponse<{ unjustifiedCount: number }>> {
     return this.http.get<ApiResponse<{ unjustifiedCount: number }>>(`${this.apiUrl}/absences/count`);
   }
+  // Risk Score
+getRiskScore(): Observable<ApiResponse<any>> {
+  return this.http.get<ApiResponse<any>>(`${this.apiUrl}/risk-score`);
+}
 }

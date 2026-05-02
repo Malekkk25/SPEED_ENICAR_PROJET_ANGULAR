@@ -20,6 +20,7 @@ export class StudentDashboardComponent implements OnInit {
   ngOnInit() {
     this.loadProfile();
     this.loadMoodStats();
+    this.loadRiskScore();
   }
 
   loadProfile() {
@@ -40,5 +41,14 @@ export class StudentDashboardComponent implements OnInit {
       1: 'Très mal', 2: 'Pas bien', 3: 'Neutre', 4: 'Bien', 5: 'Très bien'
     };
     return labels[Math.round(level)] ?? 'Neutre';
+  }
+  riskScore = signal<any>(null);
+
+
+
+  loadRiskScore() {
+    this.svc.getRiskScore().subscribe({
+      next: res => this.riskScore.set(res.data)
+    });
   }
 }
